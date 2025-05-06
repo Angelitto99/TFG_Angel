@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.servisurtelecomunicaciones">
+
+    <!-- Permiso de Internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="ServisurTelecomunicaciones"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.ServisurTelecomunicaciones">
+
+        <!-- Launcher principal -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Flujo de autenticación -->
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <!-- Home de cliente -->
+        <activity
+            android:name=".HomeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <!-- Home de administrador -->
+        <activity
+            android:name=".AdminHomeActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- Lista de incidencias (solo lectura) -->
+        <activity
+            android:name=".IncidenciasListActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- Detalle / formulario de incidencia -->
+        <activity
+            android:name=".IncidentActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- Editar perfil / avatar -->
+        <activity
+            android:name=".EditProfileActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- Gestión de facturas -->
+        <activity
+            android:name=".FacturasActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- Gestión de presupuestos -->
+        <activity
+            android:name=".PresupuestosActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- Otras pantallas de catálogo -->
+        <activity android:name=".AntenaActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".VideoporteroActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".CCTVActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".CerrajeriaActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ElectricidadActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".MantenimientoActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".AboutUsActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".FormularioAvisoActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".PorteroInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".BrandInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".IncidenciaDetailActivity"
+            android:screenOrientation="portrait"/>
+
+
+        <!-- Meta‑data de Firebase (si lo usas) -->
+        <meta-data
+            android:name="com.google.firebase.database"
+            android:value="true" />
+    </application>
+</manifest>

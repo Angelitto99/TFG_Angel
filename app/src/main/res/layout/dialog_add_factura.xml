@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Cabecera dinámica -->
+        <TextView
+            android:id="@+id/tvHeaderAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crear Factura"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:gravity="start"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Número de factura -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="@color/purple_500">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFacturaNumero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Número de factura"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Nombre cliente -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="@color/purple_500">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etClienteNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre del cliente"
+                android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- NIF/CIF -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="@color/purple_500">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etClienteNIF"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="NIF/CIF"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Dirección -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="@color/purple_500">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etClienteDireccion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Dirección del cliente"
+                android:inputType="textPostalAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Total factura -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="@color/purple_500"
+            app:suffixText="€">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFacturaImporte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Total factura"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Observaciones -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/purple_500">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFacturaObservaciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Observaciones"
+                android:inputType="textMultiLine" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+</ScrollView>

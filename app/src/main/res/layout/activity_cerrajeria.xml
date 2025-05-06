@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#f4f4f4"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Título principal -->
+        <TextView
+            android:id="@+id/tvTituloCerrajeria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cerrajería"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Subtítulo profesional -->
+        <TextView
+            android:id="@+id/tvSubtituloCerrajeria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Seguridad y Accesos Inteligentes"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FF1100"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Descripción general -->
+        <TextView
+            android:id="@+id/tvDescripcionCerrajeria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="En ServisurTelecomunicaciones, nos especializamos en brindar soluciones de cerrajería de alta calidad para reforzar la seguridad y la comodidad de su entorno. Desde la instalación de cierres eléctricos hasta la automatización de puertas con sistemas avanzados, garantizamos un servicio completo y personalizado."
+            android:textSize="18sp"
+            android:textColor="#444444"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- CardView para 'Lo que realizamos' -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp"
+            android:background="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvServicios"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Servicios que ofrecemos:"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="- Cambio de muelle clásico a muelle eléctrico"
+                    android:textSize="18sp"
+                    android:textColor="#444444"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="- Instalación de sistemas con mando o llave magnética"
+                    android:textSize="18sp"
+                    android:textColor="#444444"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="- Colocación de lectores de acceso inteligentes"
+                    android:textSize="18sp"
+                    android:textColor="#444444"
+                    android:layout_marginBottom="4dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Contenedor horizontal para las imágenes (muelle y bombillo) -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:id="@+id/llHorizontalImages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Imagen de muelle -->
+                <ImageView
+                    android:id="@+id/ivMuelle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Imagen de muelle" />
+
+                <!-- Imagen de bombillo -->
+                <ImageView
+                    android:id="@+id/ivBombillo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Imagen de bombillo" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Botón Pedir Presupuesto -->
+        <Button
+            android:id="@+id/btnPedirPresupuesto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pedir presupuesto"
+            android:textColor="@android:color/white"
+            android:background="@color/purple_500"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp"/>
+    </LinearLayout>
+</ScrollView>

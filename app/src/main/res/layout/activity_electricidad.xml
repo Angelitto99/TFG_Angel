@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:background="#F0F0F0"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Título principal -->
+        <TextView
+            android:id="@+id/tvTituloElectricidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Electricidad"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Subtítulo en rojo -->
+        <TextView
+            android:id="@+id/tvSubtituloElectricidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Soluciones y Obras Eléctricas"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FF1100"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Descripción general -->
+        <TextView
+            android:id="@+id/tvDescripcionElectricidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="En ServisurTelecomunicaciones, nos especializamos en brindar soluciones de electricidad para garantizar la seguridad y comodidad de su entorno. Desde la actualización de cuadros eléctricos hasta la instalación de sistemas de iluminación inteligente, nuestro equipo le ofrece un servicio completo y personalizado."
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- CardView para los servicios -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp"
+            android:background="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvListaServicios"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lo que realizamos:"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/tvServicio1Electricidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="- Actualización de cuadros eléctricos"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/tvServicio2Electricidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="- Instalación de interruptores inteligentes y sistemas de iluminación"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/tvServicio3Electricidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="- Renovación de cableados en casas en construcción"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="4dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Contenedor horizontal para las imágenes de servicio -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:id="@+id/llHorizontalImagesElectricidad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Imagen de cuadro eléctrico -->
+                <ImageView
+                    android:id="@+id/imgCuadro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Imagen de cuadro eléctrico" />
+
+                <!-- Imagen de interruptores inteligentes -->
+                <ImageView
+                    android:id="@+id/imgInterruptor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Imagen de interruptores inteligentes" />
+
+                <!-- Nueva Imagen: Cuadro eléctrico 2 -->
+                <ImageView
+                    android:id="@+id/imgCuadro2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Imagen de cuadro eléctrico 2" />
+
+                <!-- Nueva Imagen: Cuadro eléctrico 3 -->
+                <ImageView
+                    android:id="@+id/imgCuadro3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Imagen de cuadro eléctrico 3" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Botón Pedir Presupuesto -->
+        <Button
+            android:id="@+id/btnPedirPresupuesto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pedir presupuesto"
+            android:textColor="@android:color/white"
+            android:background="@color/purple_500"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp"/>
+    </LinearLayout>
+</ScrollView>

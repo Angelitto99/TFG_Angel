@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#FFFFFF"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Título principal -->
+        <TextView
+            android:id="@+id/tvBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Información de XMarca"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:textAlignment="center" />
+
+        <!-- Subtítulo en rojo (opcional) -->
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Soluciones Innovadoras en Videoporteros"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#D32F2F"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:textAlignment="center" />
+
+        <!-- Texto explicativo (diferencias y datos generales) -->
+        <TextView
+            android:id="@+id/tvDifferences"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Texto explicativo de la marca..."
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:textAlignment="center" />
+
+        <!-- CardView para los Precios de Portero y Videoportero -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardPrices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardUseCompatPadding="true"
+            android:backgroundTint="@android:color/white"
+            app:cardElevation="4dp">
+
+            <!-- Aquí cambiamos el gravity a start para que quede a la izquierda -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="start">
+
+                <TextView
+                    android:id="@+id/tvPricePorteroTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Precio Portero:"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="start"
+                    android:textAlignment="viewStart" />
+
+                <TextView
+                    android:id="@+id/tvPricePorteroValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="€XXX"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="start"
+                    android:textAlignment="viewStart" />
+
+                <TextView
+                    android:id="@+id/tvPriceVideoTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Precio VideoPortero:"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="start"
+                    android:textAlignment="viewStart" />
+
+                <TextView
+                    android:id="@+id/tvPriceVideoValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="€XXX"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="start"
+                    android:textAlignment="viewStart" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Título para "Placas instaladas:" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Placas instaladas:"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:textAlignment="center" />
+
+        <!-- Contenedor horizontal para imágenes de placas -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginBottom="16dp">
+            <LinearLayout
+                android:id="@+id/llPlates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center" />
+        </HorizontalScrollView>
+
+        <!-- Información de contacto -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Para asistencia personalizada, contáctanos vía email: info@servisurtelecomunicaciones.com"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:textAlignment="center" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Título de la actividad -->
+    <TextView
+        android:id="@+id/brandTextView"
+        android:text="Información de la marca"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <!-- Imagen de la marca -->
+    <ImageView
+        android:id="@+id/brandImageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="Marca de Videoportero"
+        android:scaleType="centerInside" />
+</LinearLayout>

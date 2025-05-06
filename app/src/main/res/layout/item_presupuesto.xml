@@ -1,0 +1,55 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    card:cardCornerRadius="8dp"
+    card:cardElevation="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Número y cliente en negrita y negro -->
+        <TextView
+            android:id="@+id/tvPresupuestoNumero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Presupuesto #000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/tvPresupuestoCliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvPresupuestoNumero"
+            android:layout_marginTop="4dp"
+            android:text="Cliente"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"/>
+
+        <!-- Estado en la parte inferior izquierda -->
+        <TextView
+            android:id="@+id/tvPresupuestoEstado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvPresupuestoCliente"
+            android:layout_marginTop="8dp"
+            android:text="Pendiente"
+            android:textSize="14sp"/>
+
+        <!-- Botón eliminar arriba derecha -->
+        <ImageView
+            android:id="@+id/ivPresupuestoDelete"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_delete"
+            android:contentDescription="Borrar"
+            android:layout_alignParentEnd="true"
+            card:tint="@android:color/holo_red_dark" />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

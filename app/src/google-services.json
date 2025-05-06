@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "960775025995",
+    "project_id": "servisurtelecomunicacion-223b0",
+    "firebase_url": "https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com",
+    "storage_bucket": "servisurtelecomunicacion-223b0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960775025995:android:1e87753e6c448a0d44a4ce",
+        "android_client_info": {
+          "package_name": "com.example.servisurtelecomunicaciones"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtbEAr5RbhKscaQ4jdM0JoK7v3i4fWLIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

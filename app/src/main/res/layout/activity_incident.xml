@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F7F7">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reportar una incidencia"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp" />
+
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/ic_servisur" />
+
+        <EditText
+            android:id="@+id/nameField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre completo"
+            android:background="@drawable/edittext_rounded"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/phoneField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Teléfono (+34 y 9 dígitos)"
+            android:background="@drawable/edittext_rounded"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:inputType="phone" />
+
+        <EditText
+            android:id="@+id/locationField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Dirección del aviso"
+            android:background="@drawable/edittext_rounded"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/descriptionField"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:hint="Descripción detallada del problema"
+            android:background="@drawable/edittext_rounded"
+            android:padding="12dp"
+            android:gravity="top"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btnSelectImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Agregar Imagen (opcional)"
+            android:backgroundTint="#E0E0E0"
+            android:textColor="#000"
+            android:layout_marginBottom="12dp" />
+
+        <ImageView
+            android:id="@+id/imagePreview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/btnEnviar"
+            android:text="ENVIAR CORREO"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button_purple"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+</ScrollView>

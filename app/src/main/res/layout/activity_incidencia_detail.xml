@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#F0F0F0">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Título de pantalla -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detalle de Incidencia"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Campos -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Título:"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tvDetailTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha:"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tvDetailFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Usuario:"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tvDetailUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Teléfono:"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tvDetailTelefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ubicación:"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tvDetailUbicacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descripción:"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tvDetailDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estado:"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tvDetailEstado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Botón para cambiar estado desde aquí -->
+        <Button
+            android:id="@+id/btnCambiarEstado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cambiar estado"
+            android:backgroundTint="#673AB7"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
+</ScrollView>

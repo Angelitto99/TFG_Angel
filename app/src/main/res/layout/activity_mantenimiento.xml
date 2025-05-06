@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:background="#F0F0F0"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Título principal -->
+        <TextView
+            android:id="@+id/tvTituloMantenimiento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mantenimiento"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Subtítulo en rojo -->
+        <TextView
+            android:id="@+id/tvSubtituloMantenimiento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Asistencias para Comunidades"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FF1100"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Descripción general -->
+        <TextView
+            android:id="@+id/tvDescripcionMantenimiento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nos encargamos del mantenimiento de comunidades, con más de 200 mantenimientos a nuestro cargo. Realizamos mantenimiento de antenas, porteros, iluminación y cerrajería."
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Texto sobre el contrato -->
+        <TextView
+            android:id="@+id/tvInfoContrato"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Según el tipo de contrato, los materiales pueden estar incluidos o solo se cobran los desplazamientos."
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- CardView para los servicios -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="#FFFFFF"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvTituloServicios"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Servicios que realizamos:"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvServicio1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="- Revisión y mantenimiento programado de porteros y antenas."
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvServicio2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="- Inspección, reparación y actualización de iluminación y cableados."
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvServicio3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="- Soporte técnico y asistencia en emergencias."
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="8dp"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Contenedor horizontal para las imágenes -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:id="@+id/llHorizontalImagesMantenimiento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Imagen de portero -->
+                <ImageView
+                    android:id="@+id/imgPortero"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Mantenimiento de portero" />
+
+                <!-- Imagen de antena -->
+                <ImageView
+                    android:id="@+id/imgAntena"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Mantenimiento de antena" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Botón: Pedir información -->
+        <Button
+            android:id="@+id/btnPedirInformacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pedir información"
+            android:textColor="@android:color/white"
+            android:background="@color/purple_500"
+            android:textSize="18sp"/>
+    </LinearLayout>
+</ScrollView>

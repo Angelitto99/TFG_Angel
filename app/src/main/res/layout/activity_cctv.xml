@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#f4f4f4"
+    android:padding="16dp"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Título principal -->
+        <TextView
+            android:id="@+id/tvCCTVTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CCTV"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Subtítulo en rojo -->
+        <TextView
+            android:id="@+id/tvCCTVSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vigilancia y Seguridad Avanzadas"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#D32F2F"
+            android:gravity="center"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Texto introductorio -->
+        <TextView
+            android:id="@+id/tvCCTVIntro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="En ServisurTelecomunicaciones, brindamos soluciones de Circuito Cerrado de Televisión (CCTV) adaptadas a las necesidades de su hogar, negocio o comunidad. Nuestro objetivo es ofrecer una vigilancia confiable y continua para su tranquilidad."
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- CardView para la lista de lugares -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardUseCompatPadding="true"
+            android:backgroundTint="@android:color/white"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvCCTVListTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¿Dónde instalamos?"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvCCTVList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="- Empresas\n- Garajes\n- Portales\n- Almacenes\n- Colegios"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Texto adicional previo a la imagen -->
+        <TextView
+            android:id="@+id/tvCCTVExtra"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confíe en nuestro equipo para una instalación profesional y efectiva de su sistema CCTV."
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Imagen principal del CCTV (con CardView) -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            android:backgroundTint="@android:color/white"
+            app:cardUseCompatPadding="true">
+
+            <ImageView
+                android:id="@+id/ivCCTV"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:scaleType="centerCrop"
+                android:layout_margin="8dp"/>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Botón Pedir Presupuesto -->
+        <Button
+            android:id="@+id/btnPedirPresupuesto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pedir presupuesto"
+            android:textColor="@android:color/white"
+            android:background="@color/purple_500"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp"/>
+    </LinearLayout>
+</ScrollView>

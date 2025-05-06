@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Cabecera -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Información de Factura"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Número de factura -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Número de factura:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetNumero"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Cliente -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cliente:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetCliente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- NIF/CIF -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NIF/CIF:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetNIF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Dirección -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dirección:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetDireccion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Fecha -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fecha:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Base imponible -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Base imponible:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetBase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- IVA (%) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="IVA (%):"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetIvaPct"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Cuota IVA -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cuota IVA:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetIvaCuota"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Total -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Forma de pago -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Forma de pago:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetPago"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Observaciones -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Observaciones:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetObs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Estado -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Estado:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetEstado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="16dp"/>
+    </LinearLayout>
+</ScrollView>
