@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <!-- Número y cliente en negrita y negro -->
+        <!-- Número en negrita y negro -->
         <TextView
             android:id="@+id/tvPresupuestoNumero"
             android:layout_width="wrap_content"
@@ -22,6 +22,7 @@
             android:textStyle="bold"
             android:textColor="@android:color/black"/>
 
+        <!-- Cliente debajo del número -->
         <TextView
             android:id="@+id/tvPresupuestoCliente"
             android:layout_width="wrap_content"
@@ -32,12 +33,23 @@
             android:textSize="14sp"
             android:textColor="@android:color/darker_gray"/>
 
+        <!-- Fecha debajo del cliente -->
+        <TextView
+            android:id="@+id/tvPresupuestoFecha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvPresupuestoCliente"
+            android:layout_marginTop="4dp"
+            android:text="2025-05-10"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"/>
+
         <!-- Estado en la parte inferior izquierda -->
         <TextView
             android:id="@+id/tvPresupuestoEstado"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvPresupuestoCliente"
+            android:layout_below="@id/tvPresupuestoFecha"
             android:layout_marginTop="8dp"
             android:text="Pendiente"
             android:textSize="14sp"/>
