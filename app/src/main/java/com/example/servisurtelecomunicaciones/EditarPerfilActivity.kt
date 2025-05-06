@@ -1,3 +1,4 @@
+// src/main/java/com/example/servisurtelecomunicaciones/EditarPerfilActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.app.Activity
@@ -11,19 +12,17 @@ import android.widget.Button
 import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputEditText
+import androidx.work.*
 import de.hdodenhof.circleimageview.CircleImageView
+import com.google.android.material.textfield.TextInputEditText
+import java.util.concurrent.TimeUnit
 
 class EditarPerfilActivity : AppCompatActivity() {
 
     companion object {
-        private const val PREFS          = "prefs"
-        private const val KEY_NAME       = "user_name"
-        private const val KEY_AVATAR     = "user_avatar"
-        private const val KEY_ADDRESS    = "user_address"
-        private const val KEY_PHONE      = "user_phone"
-        private const val KEY_NOTIFS     = "user_notifs"
-        private const val RC_PICK_PHOTO  = 1001
+        private const val PREFS         = "prefs"
+        private const val KEY_NOTIFS    = "user_notifs"
+        private const val RC_PICK_PHOTO = 1001
     }
 
     private lateinit var ivAvatar: CircleImageView
@@ -37,70 +36,73 @@ class EditarPerfilActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_editar_perfil)
 
-        ivAvatar     = findViewById(R.id.ivAvatar)
-        etNombre     = findViewById(R.id.etNombre)
-        etDireccion  = findViewById(R.id.etDireccion)
-        etTelefono   = findViewById(R.id.etTelefono)
-        swNotifs     = findViewById(R.id.swNotifs)
-        btnGuardar   = findViewById(R.id.btnGuardarPerfil)
+        ivAvatar    = findViewById(R.id.ivAvatar)
+        etNombre    = findViewById(R.id.etNombre)
+        etDireccion = findViewById(R.id.etDireccion)
+        etTelefono  = findViewById(R.id.etTelefono)
+        swNotifs    = findViewById(R.id.swNotifs)
+        btnGuardar  = findViewById(R.id.btnGuardarPerfil)
 
-        loadUserProfile()
-
-        ivAvatar.setOnClickListener { onChangeAvatar(it) }
-        btnGuardar.setOnClickListener {
-            saveProfileChanges()
-            finish() // vuelve al Home y en onResume se recarga saludo/avatar
-        }
-    }
-
-    private fun loadUserProfile() {
         val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        // Nombre
-        etNombre.setText(prefs.getString(KEY_NAME, "Admin"))
-        // Dirección y teléfono
-        etDireccion.setText(prefs.getString(KEY_ADDRESS, ""))
-        etTelefono.setText(prefs.getString(KEY_PHONE, ""))
-        // Notificaciones
-        swNotifs.isChecked = prefs.getBoolean(KEY_NOTIFS, true)
-        // Avatar (URI si existe)
-        prefs.getString(KEY_AVATAR, null)?.let { uriStr ->
-            ivAvatar.setImageURI(Uri.parse(uriStr))
+        swNotifs.isChecked = prefs.getBoolean(KEY_NOTIFS, false)
+
+        ivAvatar.setOnClickListener { pickImage() }
+        btnGuardar.setOnClickListener {
+            prefs.edit().putBoolean(KEY_NOTIFS, swNotifs.isChecked).apply()
+            if (swNotifs.isChecked) scheduleDailyWorker()
+            else WorkManager.getInstance(this).cancelUniqueWork("pendientes_daily")
+            Toast.makeText(this, "Perfil guardado", Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 
-    /** Lanza galería para elegir foto */
-    fun onChangeAvatar(view: View) {
-        val pick = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            .setType("image/*")
-        startActivityForResult(pick, RC_PICK_PHOTO)
+    private fun pickImage() {
+        val intent = Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        ).setType("image/*")
+        startActivityForResult(intent, RC_PICK_PHOTO)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_PICK_PHOTO && resultCode == Activity.RESULT_OK && data?.data != null) {
-            val uri = data.data!!
-            ivAvatar.setImageURI(uri)
-            // Guardamos URI en prefs
-            getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
-                .putString(KEY_AVATAR, uri.toString())
-                .apply()
+        if (requestCode == RC_PICK_PHOTO && resultCode == Activity.RESULT_OK) {
+            data?.data?.also { uri ->
+                ivAvatar.setImageURI(uri)
+                getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                    .edit()
+                    .putString("user_avatar", uri.toString())
+                    .apply()
+            }
         }
     }
 
-    private fun saveProfileChanges() {
-        val nombre = etNombre.text.toString().trim()
-        if (nombre.isEmpty()) {
-            etNombre.error = "Requerido"
-            return
-        }
-        // Guardamos todo en SharedPreferences
-        getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
-            .putString(KEY_NAME, nombre)
-            .putString(KEY_ADDRESS, etDireccion.text.toString().trim())
-            .putString(KEY_PHONE, etTelefono.text.toString().trim())
-            .putBoolean(KEY_NOTIFS, swNotifs.isChecked)
-            .apply()
+    private fun scheduleDailyWorker() {
+        val delay = calculateNext10AMDelay()
+        val req = PeriodicWorkRequestBuilder<PendientesWorker>(1, TimeUnit.DAYS)
+            .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+            .build()
 
-        Toast.makeText(this, "Perfil guardado", Toast.LENGTH_SHORT).show()
+        WorkManager.getInstance(this)
+            .enqueueUniquePeriodicWork(
+                "pendientes_daily",
+                ExistingPeriodicWorkPolicy.UPDATE,
+                req
+            )
     }
+
+    /** Calcula el retraso desde ahora hasta las 10:00 de hoy o mañana */
+    private fun calculateNext10AMDelay(): Long {
+        val now = java.util.Calendar.getInstance()
+        val target = now.clone() as java.util.Calendar
+        target.set(java.util.Calendar.HOUR_OF_DAY, 10)
+        target.set(java.util.Calendar.MINUTE, 0)
+        target.set(java.util.Calendar.SECOND, 0)
+        if (target.before(now)) {
+            target.add(java.util.Calendar.DAY_OF_MONTH, 1)
+        }
+        // ¡Fíjate en el guión normal en vez de cualquier otro dash!
+        return target.timeInMillis - now.timeInMillis
+    }
+
 }

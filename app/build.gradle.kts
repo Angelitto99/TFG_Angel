@@ -1,3 +1,5 @@
+// File: app/build.gradle.kts
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -79,6 +81,9 @@ dependencies {
 
     // Material Components (para TextInputLayout)
     implementation("com.google.android.material:material:1.11.0")
+
+    // WorkManager + coroutines (Notificaciones locales a las 10 AM)
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     // Correo
     implementation("com.sun.mail:android-mail:1.6.7")
