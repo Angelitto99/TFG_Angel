@@ -1,3 +1,4 @@
+// PresupuestosActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.os.Bundle
@@ -13,34 +14,44 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.mail.Authenticator
+import javax.mail.Message
+import javax.mail.PasswordAuthentication
+import javax.mail.Session
+import javax.mail.Transport
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeMessage
 
 class PresupuestosActivity : AppCompatActivity() {
+
+    companion object {
+        private const val EMAIL_ORIGEN   = "servisuravisosapp76@gmail.com"
+        private const val PASSWORD_EMAIL = "bnlwvwgrxbpfnqma"
+        private const val EMAIL_DESTINO  = "telecomunicacionesservisur8@gmail.com"
+    }
 
     private lateinit var dbRef: DatabaseReference
     private val lista = mutableListOf<Presupuesto>()
     private lateinit var adapter: PresupuestoAdapter
+    private val dateFmt = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_presupuestos)
 
-        // Inicializamos RTDB
-        dbRef = FirebaseDatabase
-            .getInstance("https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com")
-            .getReference("presupuestos")
+        val base = "https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com"
+        dbRef = FirebaseDatabase.getInstance(base).getReference("presupuestos")
 
-        // RecyclerView
         val rv = findViewById<RecyclerView>(R.id.rvPresupuestos)
         rv.layoutManager = LinearLayoutManager(this)
         adapter = PresupuestoAdapter(
             items           = lista,
             onEstadoChanged = { p -> dbRef.child(p.id).child("estado").setValue(p.estado) },
             onDelete        = { p -> dbRef.child(p.id).removeValue() },
-            onEdit          = { p -> showFormDialog(orig = p, isEdit = true) }
+            onEdit          = { p -> showFormDialog(orig = p, isEdit = true, numeroAuto = p.numero) }
         )
         rv.adapter = adapter
 
-        // Leer presupuestos de Firebase (filtramos valores primitivos)
         dbRef.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
                 val nuevas = snap.children
@@ -57,13 +68,17 @@ class PresupuestosActivity : AppCompatActivity() {
             }
         })
 
-        // Botón “+” crear nuevo presupuesto
         findViewById<FloatingActionButton>(R.id.fabAddPresupuesto)
-            .setOnClickListener { showFormDialog(orig = null, isEdit = false) }
+            .setOnClickListener {
+                dbRef.get().addOnSuccessListener { snap ->
+                    val count = snap.children.count { it.hasChildren() }
+                    val next  = (count + 1).toString().padStart(5, '0')
+                    showFormDialog(orig = null, isEdit = false, numeroAuto = next)
+                }
+            }
     }
 
-    /** Igual que Facturas: abre el formulario de creación/edición */
-    private fun showFormDialog(orig: Presupuesto?, isEdit: Boolean) {
+    private fun showFormDialog(orig: Presupuesto?, isEdit: Boolean, numeroAuto: String) {
         val v = LayoutInflater.from(this)
             .inflate(R.layout.dialog_presupuesto_form, null)
 
@@ -83,12 +98,13 @@ class PresupuestosActivity : AppCompatActivity() {
                 etCliente.setText(p.clienteNombre)
                 etNIF.setText(p.clienteNIF)
                 etDir.setText(p.clienteDireccion)
-                etTipo.setText(p.tipoServicio)
+                etTipo.setText(p.tipoPresupuesto)
                 etPago.setText(p.formaPago)
                 etObs.setText(p.observaciones)
             }
         } else {
             tvHeader.text = "Crear Presupuesto"
+            etNumero.setText(numeroAuto)
         }
 
         AlertDialog.Builder(this)
@@ -106,18 +122,7 @@ class PresupuestosActivity : AppCompatActivity() {
                     Toast.makeText(this,
                         "Número y cliente obligatorios", Toast.LENGTH_SHORT).show()
                 } else {
-                    if (isEdit) {
-                        val p = orig!!.copy(
-                            numero           = num,
-                            clienteNombre    = cli,
-                            clienteNIF       = nif,
-                            clienteDireccion = dir,
-                            tipoServicio     = tipo,
-                            formaPago        = pago,
-                            observaciones    = obs
-                        )
-                        dbRef.child(p.id).setValue(p)
-                    } else {
+                    if (!isEdit) {
                         val ref = dbRef.push()
                         val p = Presupuesto(
                             id               = ref.key ?: "",
@@ -126,12 +131,49 @@ class PresupuestosActivity : AppCompatActivity() {
                             clienteNombre    = cli,
                             clienteNIF       = nif,
                             clienteDireccion = dir,
-                            tipoServicio     = tipo,
+                            tipoPresupuesto     = tipo,
                             formaPago        = pago,
                             observaciones    = obs,
                             estado           = "pendiente"
                         )
                         ref.setValue(p)
+                        Thread {
+                            try {
+                                val props = Properties().apply {
+                                    put("mail.smtp.auth", "true")
+                                    put("mail.smtp.starttls.enable", "true")
+                                    put("mail.smtp.host", "smtp.gmail.com")
+                                    put("mail.smtp.port", "587")
+                                }
+                                val session = Session.getInstance(props, object: Authenticator() {
+                                    override fun getPasswordAuthentication() =
+                                        PasswordAuthentication(EMAIL_ORIGEN, PASSWORD_EMAIL)
+                                })
+                                val msg = MimeMessage(session).apply {
+                                    setFrom(InternetAddress(EMAIL_ORIGEN))
+                                    setRecipients(
+                                        Message.RecipientType.TO,
+                                        InternetAddress.parse(EMAIL_DESTINO)
+                                    )
+                                    subject = "Nuevo presupuesto #$num"
+                                    setText("Presupuesto #$num solicitado por $cli.")
+                                }
+                                Transport.send(msg)
+                            } catch(e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }.start()
+                    } else {
+                        val p = orig!!.copy(
+                            numero        = num,
+                            clienteNombre = cli,
+                            clienteNIF    = nif,
+                            clienteDireccion = dir,
+                            tipoPresupuesto  = tipo,
+                            formaPago     = pago,
+                            observaciones = obs
+                        )
+                        dbRef.child(p.id).setValue(p)
                     }
                     dlg.dismiss()
                 }

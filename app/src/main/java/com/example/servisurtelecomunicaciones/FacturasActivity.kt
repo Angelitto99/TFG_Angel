@@ -1,3 +1,4 @@
+// FacturasActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.os.Bundle
@@ -12,9 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.util.*
+import javax.mail.Authenticator
+import javax.mail.Message
+import javax.mail.PasswordAuthentication
+import javax.mail.Session
+import javax.mail.Transport
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeMessage
 
 class FacturasActivity : AppCompatActivity() {
 
@@ -32,10 +39,9 @@ class FacturasActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_facturas)
 
-        // Inicializamos RTDB
-        dbRef = FirebaseDatabase
-            .getInstance("https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com")
-            .getReference("facturas")
+        // RTDB referencia
+        val base = "https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com"
+        dbRef = FirebaseDatabase.getInstance(base).getReference("facturas")
 
         // RecyclerView
         val rv = findViewById<RecyclerView>(R.id.rvFacturas)
@@ -44,11 +50,11 @@ class FacturasActivity : AppCompatActivity() {
             items           = lista,
             onEstadoChanged = { f -> dbRef.child(f.id).child("estado").setValue(f.estado) },
             onDelete        = { f -> dbRef.child(f.id).removeValue() },
-            onEdit          = { f -> showFormDialog(orig = f, isEdit = true) }
+            onEdit          = { f -> showFormDialog(orig = f, isEdit = true, numeroAuto = f.numero) }
         )
         rv.adapter = adapter
 
-        // Leer facturas de Firebase
+        // Carga las facturas
         dbRef.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
                 val nuevas = snap.children
@@ -59,37 +65,37 @@ class FacturasActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
             }
             override fun onCancelled(err: DatabaseError) {
-                Toast.makeText(
-                    this@FacturasActivity,
-                    "Error: ${err.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this@FacturasActivity,
+                    "Error: ${err.message}", Toast.LENGTH_SHORT).show()
             }
         })
 
-        // Botón “+” crear nueva factura
+        // Botón “+”: número = hijos+1 formateado
         findViewById<FloatingActionButton>(R.id.fabAddFactura)
-            .setOnClickListener { showFormDialog(orig = null, isEdit = false) }
+            .setOnClickListener {
+                dbRef.get().addOnSuccessListener { snap ->
+                    val next = (snap.childrenCount + 1).toString().padStart(5, '0')
+                    showFormDialog(orig = null, isEdit = false, numeroAuto = next)
+                }
+            }
     }
 
-    private fun showFormDialog(orig: Factura?, isEdit: Boolean) {
+    private fun showFormDialog(orig: Factura?, isEdit: Boolean, numeroAuto: String) {
         val v = LayoutInflater.from(this)
             .inflate(R.layout.dialog_factura_form, null)
 
-        // Referencias a los campos
-        val tvHeader   = v.findViewById<TextView>(R.id.tvFormHeader)
-        val etNumero   = v.findViewById<TextInputEditText>(R.id.etNumero)
-        val etCliente  = v.findViewById<TextInputEditText>(R.id.etClienteNombre)
-        val etNIF      = v.findViewById<TextInputEditText>(R.id.etClienteNIF)
-        val etDir      = v.findViewById<TextInputEditText>(R.id.etClienteDireccion)
-        val etBase     = v.findViewById<TextInputEditText>(R.id.etBase)
-        val etIvaPct   = v.findViewById<TextInputEditText>(R.id.etIvaPct)
-        val etIvaCu    = v.findViewById<TextInputEditText>(R.id.etIvaCuota)
-        val etTotal    = v.findViewById<TextInputEditText>(R.id.etTotal)
-        val etPago     = v.findViewById<TextInputEditText>(R.id.etFormaPago)
-        val etObs      = v.findViewById<TextInputEditText>(R.id.etObservaciones)
+        val tvHeader  = v.findViewById<TextView>(R.id.tvFormHeader)
+        val etNumero  = v.findViewById<TextInputEditText>(R.id.etNumero)
+        val etCliente = v.findViewById<TextInputEditText>(R.id.etClienteNombre)
+        val etNIF     = v.findViewById<TextInputEditText>(R.id.etClienteNIF)
+        val etDir     = v.findViewById<TextInputEditText>(R.id.etClienteDireccion)
+        val etBase    = v.findViewById<TextInputEditText>(R.id.etBase)
+        val etIvaPct  = v.findViewById<TextInputEditText>(R.id.etIvaPct)
+        val etIvaCu   = v.findViewById<TextInputEditText>(R.id.etIvaCuota)
+        val etTotal   = v.findViewById<TextInputEditText>(R.id.etTotal)
+        val etPago    = v.findViewById<TextInputEditText>(R.id.etFormaPago)
+        val etObs     = v.findViewById<TextInputEditText>(R.id.etObservaciones)
 
-        // Cabecera y valores por defecto
         if (isEdit) {
             tvHeader.text = "Editar Factura"
             orig!!.let { f ->
@@ -104,35 +110,30 @@ class FacturasActivity : AppCompatActivity() {
             }
         } else {
             tvHeader.text = "Crear Factura"
+            etNumero.setText(numeroAuto)
             etIvaPct.setText("21.0")
         }
 
-        // Desactivar edición de cuota y total
         etIvaCu.isEnabled = false
         etTotal.isEnabled = false
-
-        // Recalcular IVA y total cada vez que cambie base o %IVA
         val watcher = object: TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) {}
-            override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val base   = etBase.text.toString().toDoubleOrNull() ?: 0.0
                 val ivaPct = etIvaPct.text.toString().toDoubleOrNull() ?: 0.0
                 val ivaCu  = base * ivaPct / 100
-                val tot    = base + ivaCu
                 etIvaCu.setText(String.format(Locale.getDefault(), "%.2f", ivaCu))
-                etTotal.setText(String.format(Locale.getDefault(), "%.2f", tot))
+                etTotal.setText(String.format(Locale.getDefault(), "%.2f", base + ivaCu))
             }
+            override fun beforeTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) {}
+            override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) {}
         }
         etBase.addTextChangedListener(watcher)
         etIvaPct.addTextChangedListener(watcher)
-
-        // Si es edición, rellena cuota/total inicial
         if (isEdit) watcher.afterTextChanged(null)
 
         AlertDialog.Builder(this)
             .setView(v)
-            .setPositiveButton(if (isEdit) "Guardar" else "Crear") { dlg, _ ->
+            .setPositiveButton(if (isEdit) "Guardar" else "Crear") { dlg,_ ->
                 val num  = etNumero.text.toString().trim()
                 val cli  = etCliente.text.toString().trim()
                 val nif  = etNIF.text.toString().trim()
@@ -146,27 +147,13 @@ class FacturasActivity : AppCompatActivity() {
 
                 if (num.isEmpty() || cli.isEmpty()) {
                     Toast.makeText(this,
-                        "Número y cliente obligatorios",
-                        Toast.LENGTH_SHORT).show()
+                        "Número y cliente obligatorios", Toast.LENGTH_SHORT).show()
                 } else {
-                    if (isEdit) {
-                        val upd = orig!!.copy(
-                            numero           = num,
-                            clienteNombre    = cli,
-                            clienteNIF       = nif,
-                            clienteDireccion = dir,
-                            baseImponible    = base,
-                            tipoIva          = ivaPct,
-                            cuotaIva         = ivaCu,
-                            total            = tot,
-                            formaPago        = pago,
-                            observaciones    = obs
-                        )
-                        dbRef.child(upd.id).setValue(upd)
-                    } else {
-                        val p = dbRef.push()
+                    if (!isEdit) {
+                        // Crear nodo
+                        val ref = dbRef.push()
                         val f = Factura(
-                            id               = p.key ?: "",
+                            id               = ref.key ?: "",
                             numero           = num,
                             fecha            = System.currentTimeMillis(),
                             clienteNombre    = cli,
@@ -180,18 +167,48 @@ class FacturasActivity : AppCompatActivity() {
                             observaciones    = obs,
                             estado           = "pendiente"
                         )
-                        p.setValue(f)
-                        // Envío de correo
+                        ref.setValue(f)
+                        // Envío de email
                         Thread {
-                            val admin = FirebaseAuth.getInstance().currentUser?.displayName
-                                ?: FirebaseAuth.getInstance().currentUser?.email.orEmpty()
-                            MailSender(EMAIL_ORIGEN, PASSWORD_EMAIL)
-                                .sendMail(
-                                    "Nueva factura - $admin",
-                                    "Factura #$num por $tot € creada.",
-                                    EMAIL_DESTINO
-                                )
+                            try {
+                                val props = Properties().apply {
+                                    put("mail.smtp.auth", "true")
+                                    put("mail.smtp.starttls.enable", "true")
+                                    put("mail.smtp.host", "smtp.gmail.com")
+                                    put("mail.smtp.port", "587")
+                                }
+                                val session = Session.getInstance(props, object: Authenticator() {
+                                    override fun getPasswordAuthentication() =
+                                        PasswordAuthentication(EMAIL_ORIGEN, PASSWORD_EMAIL)
+                                })
+                                val msg = MimeMessage(session).apply {
+                                    setFrom(InternetAddress(EMAIL_ORIGEN))
+                                    setRecipients(
+                                        Message.RecipientType.TO,
+                                        InternetAddress.parse(EMAIL_DESTINO)
+                                    )
+                                    subject = "Nueva factura #$num"
+                                    setText("Factura #$num por ${"%.2f".format(tot)} € creada para $cli.")
+                                }
+                                Transport.send(msg)
+                            } catch(e: Exception) {
+                                e.printStackTrace()
+                            }
                         }.start()
+                    } else {
+                        val upd = orig!!.copy(
+                            numero           = num,
+                            clienteNombre    = cli,
+                            clienteNIF       = nif,
+                            clienteDireccion = dir,
+                            baseImponible    = base,
+                            tipoIva          = ivaPct,
+                            cuotaIva         = ivaCu,
+                            total            = tot,
+                            formaPago        = pago,
+                            observaciones    = obs
+                        )
+                        dbRef.child(upd.id).setValue(upd)
                     }
                     dlg.dismiss()
                 }

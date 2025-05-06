@@ -7,7 +7,7 @@ data class Presupuesto(
     val clienteNombre: String = "",
     val clienteNIF: String = "",
     val clienteDireccion: String = "",
-    val tipoServicio: String = "",
+    val tipoPresupuesto: String = "",
     val formaPago: String = "",
     val observaciones: String = "",
     var estado: String = "pendiente"

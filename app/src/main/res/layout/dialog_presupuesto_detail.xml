@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,97 +16,126 @@
             android:text="Información de Presupuesto"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Número:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetNumero"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             android:layout_marginBottom="12dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Número:"/>
-        <TextView
-            android:id="@+id/tvDetNumero"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cliente:"/>
+            android:text="Cliente:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
         <TextView
             android:id="@+id/tvDetCliente"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NIF/CIF:"/>
+            android:text="NIF/CIF:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
         <TextView
             android:id="@+id/tvDetNIF"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dirección:"/>
+            android:text="Dirección:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
         <TextView
             android:id="@+id/tvDetDireccion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fecha:"/>
+            android:text="Fecha:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
         <TextView
             android:id="@+id/tvDetFecha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Servicio:"/>
+            android:text="Servicio:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
         <TextView
             android:id="@+id/tvDetTipo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Forma de pago:"/>
+            android:text="Forma de pago:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
         <TextView
             android:id="@+id/tvDetPago"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Observaciones:"/>
+            android:text="Observaciones:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
         <TextView
             android:id="@+id/tvDetObs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Estado:"/>
+            android:text="Estado:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
         <TextView
             android:id="@+id/tvDetEstado"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="16dp"/>
 
     </LinearLayout>
 </ScrollView>

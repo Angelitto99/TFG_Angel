@@ -102,7 +102,7 @@ class PresupuestoAdapter(
         v.findViewById<TextView>(R.id.tvDetNIF).text       = p.clienteNIF
         v.findViewById<TextView>(R.id.tvDetDireccion).text = p.clienteDireccion
         v.findViewById<TextView>(R.id.tvDetFecha).text     = dateFmt.format(Date(p.fecha))
-        v.findViewById<TextView>(R.id.tvDetTipo).text      = p.tipoServicio
+        v.findViewById<TextView>(R.id.tvDetTipo).text      = p.tipoPresupuesto
         v.findViewById<TextView>(R.id.tvDetPago).text      = p.formaPago
         v.findViewById<TextView>(R.id.tvDetObs).text       = p.observaciones
 
