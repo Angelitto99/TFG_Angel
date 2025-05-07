@@ -1,5 +1,6 @@
 package com.example.servisurtelecomunicaciones
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -17,8 +18,6 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
-
     companion object {
         private const val ADMIN_PIN = "1234"
         private val ADMIN_EMAILS = listOf(
@@ -27,8 +26,21 @@ class LoginActivity : AppCompatActivity() {
         )
     }
 
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // ✅ AUTOLOGIN si ya hay usuario
+        val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val isAdmin = prefs.getBoolean("is_admin", false)
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            startActivity(Intent(this, if (isAdmin) AdminHomeActivity::class.java else HomeActivity::class.java))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_login)
 
         auth = FirebaseAuth.getInstance()
@@ -46,101 +58,103 @@ class LoginActivity : AppCompatActivity() {
         val ivTwitter   = findViewById<CircleImageView>(R.id.ivTwitter)
         val tvPrivacy   = findViewById<TextView>(R.id.tvPrivacy)
 
-        // Cargo logo y redes
+        // Cargar imágenes
         Glide.with(this).load(R.drawable.ic_servisur).fitCenter().into(logoIv)
-        Glide.with(this).load(R.drawable.ic_google).override(48,48).into(ivGoogle)
-        Glide.with(this).load(R.drawable.ic_facebook).override(48,48).into(ivFacebook)
-        Glide.with(this).load(R.drawable.ic_twitter).override(48,48).into(ivTwitter)
+        Glide.with(this).load(R.drawable.ic_google).override(48, 48).into(ivGoogle)
+        Glide.with(this).load(R.drawable.ic_facebook).override(48, 48).into(ivFacebook)
+        Glide.with(this).load(R.drawable.ic_twitter).override(48, 48).into(ivTwitter)
 
-        // Mostrar u ocultar PIN según switch
-        switchAdmin.setOnCheckedChangeListener { _, isAdmin ->
-            pinEt.visibility = if (isAdmin) View.VISIBLE else View.GONE
+        // Mostrar u ocultar PIN
+        switchAdmin.setOnCheckedChangeListener { _, isChecked ->
+            pinEt.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
 
-        // Pie de privacidad/ términos
+        // Pie con links legales
         val html = """
-             
             <a href="https://www.example.com/privacy">Política de Privacidad</a> y 
             <a href="https://www.example.com/terms">Términos de Servicio</a>.
         """.trimIndent()
         tvPrivacy.text = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY)
         tvPrivacy.movementMethod = LinkMovementMethod.getInstance()
 
-        // — INICIAR SESIÓN —
+        // BOTÓN LOGIN
         loginBtn.setOnClickListener {
             val email = emailEt.text.toString().trim()
             val pwd   = passEt.text.toString()
 
-            // Validaciones básicas
             if (email.isEmpty() || pwd.isEmpty()) {
-                return@setOnClickListener toastCentered("Completa email y contraseña")
+                toastCentered("Completa email y contraseña")
+                return@setOnClickListener
             }
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                return@setOnClickListener toastCentered("Email no válido")
+                toastCentered("Email no válido")
+                return@setOnClickListener
             }
 
             if (switchAdmin.isChecked) {
-                // **FLUJO ADMIN**
+                // FLUJO ADMIN
                 if (email !in ADMIN_EMAILS) {
-                    return@setOnClickListener toastCentered("Este correo no es de administrador")
+                    toastCentered("Este correo no es de administrador")
+                    return@setOnClickListener
                 }
                 val pin = pinEt.text.toString().trim()
                 if (pin.isEmpty()) {
-                    return@setOnClickListener toastCentered("Introduce el PIN de administrador")
+                    toastCentered("Introduce el PIN de administrador")
+                    return@setOnClickListener
                 }
                 if (pin != ADMIN_PIN) {
-                    return@setOnClickListener toastCentered("PIN de administrador incorrecto")
+                    toastCentered("PIN de administrador incorrecto")
+                    return@setOnClickListener
                 }
-                // Si todo OK, vamos a Firebase:
-                auth.signInWithEmailAndPassword(email, pwd)
-                    .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            startActivity(Intent(this, AdminHomeActivity::class.java))
-                            finish()
-                        } else {
-                            handleAuthError(task.exception)
-                        }
+                auth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        prefs.edit().putBoolean("is_admin", true).apply()
+                        startActivity(Intent(this, AdminHomeActivity::class.java))
+                        finish()
+                    } else {
+                        handleAuthError(task.exception)
                     }
+                }
             } else {
-                // **FLUJO CLIENTE NORMAL**
-                auth.signInWithEmailAndPassword(email, pwd)
-                    .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            startActivity(Intent(this, HomeActivity::class.java))
-                            finish()
-                        } else {
-                            handleAuthError(task.exception)
-                        }
+                // FLUJO CLIENTE
+                auth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        prefs.edit().putBoolean("is_admin", false).apply()
+                        startActivity(Intent(this, HomeActivity::class.java))
+                        finish()
+                    } else {
+                        handleAuthError(task.exception)
                     }
+                }
             }
         }
 
-        // — REGISTRARSE —
+        // BOTÓN REGISTRO
         registerBtn.setOnClickListener {
             val email = emailEt.text.toString().trim()
             val pwd   = passEt.text.toString()
             if (email.isEmpty() || pwd.isEmpty()) {
-                return@setOnClickListener toastCentered("Completa email y contraseña")
+                toastCentered("Completa email y contraseña")
+                return@setOnClickListener
             }
-            auth.createUserWithEmailAndPassword(email, pwd)
-                .addOnCompleteListener(this) { reg ->
-                    if (reg.isSuccessful) {
-                        toastCentered("Registro exitoso")
-                        startActivity(Intent(this, HomeActivity::class.java))
-                        finish()
-                    } else {
-                        toastCentered("Error al registrar: ${reg.exception?.message}")
-                    }
+            auth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener(this) { reg ->
+                if (reg.isSuccessful) {
+                    prefs.edit().putBoolean("is_admin", false).apply()
+                    toastCentered("Registro exitoso")
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    finish()
+                } else {
+                    toastCentered("Error al registrar: ${reg.exception?.message}")
                 }
+            }
         }
 
-        // — OAUTH SIMULADO —
-        ivGoogle  .setOnClickListener { openUrl("https://accounts.google.com/") }
+        // BOTONES DE REDES (simulados)
+        ivGoogle.setOnClickListener { openUrl("https://accounts.google.com/") }
         ivFacebook.setOnClickListener { openUrl("https://www.facebook.com/") }
-        ivTwitter .setOnClickListener { openUrl("https://twitter.com/login") }
+        ivTwitter.setOnClickListener { openUrl("https://twitter.com/login") }
     }
 
-    // Muestra un Toast centrado
     private fun toastCentered(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).apply {
             setGravity(Gravity.CENTER, 0, 250)
@@ -148,20 +162,16 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // Manejo de errores de FirebaseAuth
     private fun handleAuthError(ex: Exception?) {
         when (ex) {
-            is FirebaseAuthInvalidUserException ->
-                toastCentered("No existe ninguna cuenta con ese correo")
-            is FirebaseAuthInvalidCredentialsException ->
-                toastCentered("La contraseña es incorrecta")
-            else ->
-                toastCentered("Error de autenticación: ${ex?.localizedMessage}")
+            is FirebaseAuthInvalidUserException -> toastCentered("No existe ninguna cuenta con ese correo")
+            is FirebaseAuthInvalidCredentialsException -> toastCentered("La contraseña es incorrecta")
+            else -> toastCentered("Error de autenticación: ${ex?.localizedMessage}")
         }
     }
 
-    // Abre URL en navegador
     private fun openUrl(url: String) {
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 }
+

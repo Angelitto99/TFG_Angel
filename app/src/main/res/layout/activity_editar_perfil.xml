@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#F0F0F0">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:gravity="center_horizontal">
+        android:padding="16dp">
 
-        <!-- Avatar centrado -->
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ivAvatar"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/ic_perfil"
-            android:contentDescription="@string/desc_foto_perfil"
-            android:scaleType="centerCrop"
-            android:background="@drawable/circle_bg"
-            android:padding="4dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- AVATAR + SALUDO -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cambiar foto"
-            android:textColor="@color/purple_500"
-            android:layout_marginTop="8dp"
-            android:onClick="onChangeAvatar"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="16dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_perfil"
+                android:contentDescription="@string/desc_foto_perfil"
+                android:layout_marginEnd="12dp"/>
+
+            <TextView
+                android:id="@+id/tvHolaUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hola, Usuario"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
 
         <!-- Nombre completo -->
         <com.google.android.material.textfield.TextInputLayout
@@ -35,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nombre completo"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNombre"
                 android:layout_width="match_parent"
@@ -75,12 +83,18 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="24dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Recibir notificaciones"/>
+                android:layout_weight="1"
+                android:text="¿Quieres Recibir notificaciones?"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
             <Switch
                 android:id="@+id/swNotifs"
                 android:layout_width="wrap_content"
@@ -92,15 +106,21 @@
             android:id="@+id/btnCambiarPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cambiar contraseña"
-            android:layout_marginTop="24dp"/>
+            android:text="CAMBIAR CONTRASEÑA"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white"
+            android:textAllCaps="true"/>
 
         <!-- Botón Guardar -->
         <Button
             android:id="@+id/btnGuardarPerfil"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Guardar"
-            android:layout_marginTop="16dp"/>
+            android:text="GUARDAR"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white"
+            android:textAllCaps="true"/>
     </LinearLayout>
 </ScrollView>

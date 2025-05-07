@@ -170,12 +170,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Empuja el botón al pie -->
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
         <!-- BOTÓN CERRAR SESIÓN -->
         <Button
             android:id="@+id/btnCerrarSesionAdmin"
@@ -186,6 +180,7 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:padding="14dp"/>
+            android:padding="14dp"
+            android:layout_marginTop="24dp"/>
     </LinearLayout>
 </ScrollView>
