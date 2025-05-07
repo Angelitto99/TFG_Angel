@@ -1,5 +1,3 @@
-// File: app/build.gradle.kts
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -9,15 +7,15 @@ plugins {
 }
 
 android {
-    namespace   = "com.example.servisurtelecomunicaciones"
-    compileSdk  = 34
+    namespace = "com.example.servisurtelecomunicaciones"
+    compileSdk = 34
 
     defaultConfig {
-        applicationId     = "com.example.servisurtelecomunicaciones"
-        minSdk            = 24
-        targetSdk         = 34
-        versionCode       = 1
-        versionName       = "1.0"
+        applicationId = "com.example.servisurtelecomunicaciones"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -67,7 +65,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
 
-    // Compose BOM
+    // Compose BOM (aunque no uses Compose, puedes dejar esto o quitarlo si quieres limpiar más)
     implementation(platform("androidx.compose:compose-bom:2023.10.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -79,10 +77,10 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx:20.3.1")
     implementation("com.google.firebase:firebase-appcheck:17.1.2")
 
-    // Material Components (para TextInputLayout)
+    // Material Components
     implementation("com.google.android.material:material:1.11.0")
 
-    // WorkManager + coroutines (Notificaciones locales a las 10 AM)
+    // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     // Correo
@@ -97,9 +95,11 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     kapt("com.github.bumptech.glide:compiler:4.15.1")
 
-    // Testing
+    // Testing (solo básico)
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+
+    // ❌ Compose test eliminado
+    // androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 }

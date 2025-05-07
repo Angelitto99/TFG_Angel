@@ -149,10 +149,17 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // BOTONES DE REDES (simulados)
-        ivGoogle.setOnClickListener { openUrl("https://accounts.google.com/") }
-        ivFacebook.setOnClickListener { openUrl("https://www.facebook.com/") }
-        ivTwitter.setOnClickListener { openUrl("https://twitter.com/login") }
+        // BOTONES DE REDES (simulados → SOLO CLIENTES)
+        val socialClick = View.OnClickListener {
+            toastCentered("Acceso como cliente")
+            prefs.edit().putBoolean("is_admin", false).apply()
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
+        }
+
+        ivGoogle.setOnClickListener(socialClick)
+        ivFacebook.setOnClickListener(socialClick)
+        ivTwitter.setOnClickListener(socialClick)
     }
 
     private fun toastCentered(msg: String) {
@@ -169,9 +176,4 @@ class LoginActivity : AppCompatActivity() {
             else -> toastCentered("Error de autenticación: ${ex?.localizedMessage}")
         }
     }
-
-    private fun openUrl(url: String) {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-    }
 }
-
