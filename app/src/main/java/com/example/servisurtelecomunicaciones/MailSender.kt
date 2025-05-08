@@ -1,18 +1,18 @@
 package com.example.servisurtelecomunicaciones
 
+import java.io.File
 import java.util.Properties
-import javax.mail.Authenticator
-import javax.mail.Message
-import javax.mail.MessagingException
-import javax.mail.PasswordAuthentication
-import javax.mail.Session
-import javax.mail.Transport
+import javax.activation.DataHandler
+import javax.activation.FileDataSource
+import javax.mail.*
 import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeBodyPart
 import javax.mail.internet.MimeMessage
+import javax.mail.internet.MimeMultipart
 
 class MailSender(
-    private val username: String,   // Ej: tuCorreo@gmail.com
-    private val password: String    // Contraseña o App Password
+    private val username: String,
+    private val password: String
 ) {
     private val session: Session
 
@@ -26,7 +26,6 @@ class MailSender(
 
         session = Session.getInstance(props, object : Authenticator() {
             override fun getPasswordAuthentication(): PasswordAuthentication {
-                // Asegúrate de usar javax.mail.PasswordAuthentication
                 return PasswordAuthentication(username, password)
             }
         })
@@ -34,12 +33,37 @@ class MailSender(
 
     @Throws(MessagingException::class)
     fun sendMail(subject: String, body: String, recipient: String) {
-        val message: Message = MimeMessage(session).apply {
+        val message = MimeMessage(session).apply {
             setFrom(InternetAddress(username))
             setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient))
             this.subject = subject
             setText(body)
         }
+        Transport.send(message)
+    }
+
+    @Throws(MessagingException::class)
+    fun sendMailWithAttachment(subject: String, body: String, recipient: String, attachmentPath: String?) {
+        val message = MimeMessage(session)
+        message.setFrom(InternetAddress(username))
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient))
+        message.subject = subject
+
+        val multipart = MimeMultipart()
+
+        val messageBodyPart = MimeBodyPart()
+        messageBodyPart.setText(body)
+        multipart.addBodyPart(messageBodyPart)
+
+        if (!attachmentPath.isNullOrEmpty()) {
+            val attachPart = MimeBodyPart()
+            val source = FileDataSource(File(attachmentPath))
+            attachPart.dataHandler = DataHandler(source)
+            attachPart.fileName = source.name
+            multipart.addBodyPart(attachPart)
+        }
+
+        message.setContent(multipart)
         Transport.send(message)
     }
 }
