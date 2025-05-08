@@ -25,7 +25,7 @@
                 android:layout_height="56dp"
                 android:src="@drawable/ic_perfil"
                 android:contentDescription="@string/desc_foto_perfil"
-                android:layout_marginEnd="12dp"/>
+                android:layout_marginEnd="12dp" />
 
             <TextView
                 android:id="@+id/tvHolaUsuario"
@@ -34,7 +34,7 @@
                 android:text="Hola, Usuario"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- Nombre completo -->
@@ -44,23 +44,25 @@
             android:layout_height="wrap_content"
             android:hint="Nombre completo"
             android:layout_marginTop="8dp">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNombre"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Dirección -->
+        <!-- Empresa o Rol -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Dirección"
+            android:hint="Empresa o rol"
             android:layout_marginTop="16dp">
+
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDireccion"
+                android:id="@+id/etEmpresa"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Teléfono -->
@@ -70,11 +72,12 @@
             android:layout_height="wrap_content"
             android:hint="Teléfono"
             android:layout_marginTop="16dp">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etTelefono"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="phone"/>
+                android:inputType="phone" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Switch de notificaciones -->
@@ -91,14 +94,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="¿Quieres Recibir notificaciones?"
+                android:text="¿Quieres recibir notificaciones?"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <Switch
                 android:id="@+id/swNotifs"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <!-- Botón Cambiar contraseña -->
@@ -108,9 +111,9 @@
             android:layout_height="wrap_content"
             android:text="CAMBIAR CONTRASEÑA"
             android:layout_marginTop="24dp"
-            android:backgroundTint="@color/purple_500"
+            android:backgroundTint="@color/teal_700"
             android:textColor="@android:color/white"
-            android:textAllCaps="true"/>
+            android:textAllCaps="true" />
 
         <!-- Botón Guardar -->
         <Button
@@ -119,8 +122,9 @@
             android:layout_height="wrap_content"
             android:text="GUARDAR"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
             android:backgroundTint="@color/purple_500"
             android:textColor="@android:color/white"
-            android:textAllCaps="true"/>
+            android:textAllCaps="true" />
     </LinearLayout>
 </ScrollView>
