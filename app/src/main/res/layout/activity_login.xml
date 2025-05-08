@@ -1,159 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
+    android:orientation="vertical"
     android:padding="16dp"
-    android:background="#F0F0F0">
+    android:background="#F0F0F0"
+    android:gravity="center_vertical">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:gravity="top|center_horizontal"
+    <!-- Logo ajustado -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Logo Servisur" />
+
+    <!-- Email -->
+    <EditText
+        android:id="@+id/mail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp">
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:background="@drawable/edittext_style"
+        android:padding="10dp"
+        android:layout_marginBottom="8dp"/>
 
-        <!-- Logo agrandado -->
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="Logo Servisur"
-            android:scaleType="fitCenter"
-            android:layout_marginBottom="24dp"/>
+    <!-- Contraseña -->
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña"
+        android:inputType="textPassword"
+        android:background="@drawable/edittext_style"
+        android:padding="10dp"
+        android:layout_marginBottom="8dp"/>
 
-        <!-- Email -->
-        <EditText
-            android:id="@+id/mail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:background="@drawable/edittext_style"
-            android:padding="12dp"
-            android:layout_marginBottom="8dp"/>
+    <!-- Switch admin -->
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchAdmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Entrar como administrador"
+        android:layout_marginBottom="12dp"/>
 
-        <!-- Contraseña -->
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Contraseña"
-            android:inputType="textPassword"
-            android:background="@drawable/edittext_style"
-            android:padding="12dp"
-            android:layout_marginBottom="8dp"/>
+    <!-- PIN admin -->
+    <EditText
+        android:id="@+id/pinField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="PIN Administrador"
+        android:inputType="numberPassword"
+        android:background="@drawable/edittext_style"
+        android:padding="10dp"
+        android:visibility="gone"
+        android:layout_marginBottom="12dp"/>
 
-        <!-- Switch modo admin -->
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switchAdmin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Entrar como administrador"
-            android:layout_marginBottom="16dp"/>
+    <!-- Botones -->
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="INICIAR SESIÓN"
+        android:textAllCaps="false"
+        android:background="@drawable/rounded_button_purple"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
 
-        <!-- PIN admin (oculto por defecto) -->
-        <EditText
-            android:id="@+id/pinField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="PIN Administrador"
-            android:inputType="numberPassword"
-            android:background="@drawable/edittext_style"
-            android:padding="12dp"
-            android:visibility="gone"
-            android:layout_marginBottom="12dp"/>
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="REGISTRARSE"
+        android:textAllCaps="false"
+        android:background="@drawable/rounded_button_gray"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp" />
 
-        <!-- Iniciar sesión -->
-        <Button
-            android:id="@+id/loginButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="INICIAR SESIÓN"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:background="@drawable/rounded_button_purple"
-            android:padding="14dp"
-            android:layout_marginBottom="8dp"/>
-
-        <!-- Registrarse -->
-        <Button
-            android:id="@+id/registerButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="REGISTRARSE"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:background="@drawable/rounded_button_gray"
-            android:padding="14dp"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Divisor “o” -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@android:color/darker_gray"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="  o  "
-                android:textColor="@android:color/darker_gray"/>
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@android:color/darker_gray"/>
-        </LinearLayout>
-
-        <!-- Texto redes sociales -->
+    <!-- Divisor -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="12dp">
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@android:color/darker_gray"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Puede también registrarse con:"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Iconos sociales (margen reducido) -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="12dp">
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivGoogle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_margin="8dp"/>
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivFacebook"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_margin="8dp"/>
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivTwitter"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_margin="8dp"/>
-        </LinearLayout>
-
-        <!-- Pie de pantalla con Política y Términos (margen top reducido) -->
-        <TextView
-            android:id="@+id/tvPrivacy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#2962FF"
-            android:textSize="12sp"
-            android:layout_marginTop="8dp"/>
+            android:text="  o  "
+            android:textColor="@android:color/darker_gray"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@android:color/darker_gray"/>
     </LinearLayout>
-</ScrollView>
+
+    <!-- Texto y redes -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Puede también registrarse con:"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="8dp">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivGoogle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="6dp"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivFacebook"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="6dp"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivTwitter"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="6dp"/>
+    </LinearLayout>
+
+    <!-- Política de privacidad -->
+    <TextView
+        android:id="@+id/tvPrivacy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Al continuar aceptas nuestra política de privacidad y términos."
+        android:textSize="12sp"
+        android:textColor="#2962FF"
+        android:layout_marginTop="4dp"
+        android:gravity="center"/>
+
+</LinearLayout>
