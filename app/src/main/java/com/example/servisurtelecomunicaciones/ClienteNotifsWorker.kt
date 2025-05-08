@@ -25,6 +25,20 @@ class ClienteNotifsWorker(appContext: Context, workerParams: WorkerParameters)
             return Result.success()
         }
 
+        // 🔴 BLOQUE NUEVO: crear canal de notificación (obligatorio en Android 8+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Revisión semanal",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Notificaciones para revisar estado de servicios semanalmente"
+            }
+
+            val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+
         val intent = Intent(applicationContext, IncidentActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             applicationContext, 0, intent,

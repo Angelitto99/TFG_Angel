@@ -102,10 +102,26 @@ class EditarPerfilActivity : AppCompatActivity() {
                         RC_NOTIF_PERM
                     )
                 } else {
-                    if (!isAdmin) ClienteNotifsWorker.scheduleWeekly(this)
+                    if (!isAdmin) {
+                        ClienteNotifsWorker.scheduleWeekly(this)
+                    } else {
+                        val request = androidx.work.PeriodicWorkRequestBuilder<PendientesWorker>(1, java.util.concurrent.TimeUnit.DAYS)
+                            .setInitialDelay(10, java.util.concurrent.TimeUnit.SECONDS) // para pruebas
+                            .build()
+
+                        androidx.work.WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                            "pendientes_diarios",
+                            androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
+                            request
+                        )
+                    }
                 }
             } else {
-                WorkManager.getInstance(this).cancelAllWorkByTag("cliente_revision_semanal")
+                if (!isAdmin) {
+                    WorkManager.getInstance(this).cancelAllWorkByTag("cliente_revision_semanal")
+                } else {
+                    WorkManager.getInstance(this).cancelAllWorkByTag("pendientes_diarios")
+                }
             }
 
             Toast.makeText(this, "Perfil guardado", Toast.LENGTH_SHORT).show()
@@ -141,7 +157,20 @@ class EditarPerfilActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RC_NOTIF_PERM && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            ClienteNotifsWorker.scheduleWeekly(this)
+            val isAdmin = getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean("is_admin", false)
+            if (!isAdmin) {
+                ClienteNotifsWorker.scheduleWeekly(this)
+            } else {
+                val request = androidx.work.PeriodicWorkRequestBuilder<PendientesWorker>(1, java.util.concurrent.TimeUnit.DAYS)
+                    .setInitialDelay(10, java.util.concurrent.TimeUnit.SECONDS)
+                    .build()
+
+                androidx.work.WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                    "pendientes_diarios",
+                    androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
+                    request
+                )
+            }
         }
     }
 }
