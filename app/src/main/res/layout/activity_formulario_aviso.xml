@@ -38,7 +38,6 @@
             android:padding="12dp"
             android:layout_marginBottom="12dp" />
 
-        <!-- Nuevo campo para Teléfono -->
         <EditText
             android:id="@+id/editTextTelefono"
             android:layout_width="match_parent"
@@ -67,6 +66,26 @@
             android:padding="12dp"
             android:gravity="top"
             android:layout_marginBottom="16dp" />
+
+        <!-- NUEVO: Botón para seleccionar imagen -->
+        <Button
+            android:id="@+id/btnSelectImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="AGREGAR IMAGEN (OPCIONAL)"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="@android:color/darker_gray"
+            android:textColor="@android:color/white" />
+
+        <!-- NUEVO: Previsualización de imagen -->
+        <ImageView
+            android:id="@+id/imagePreview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:background="@drawable/edittext_rounded" />
 
         <!-- Botón enviar -->
         <Button

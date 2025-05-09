@@ -2,14 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.servisurtelecomunicaciones">
 
-    <!-- Permisos necesarios -->
+    <!-- 🔒 Permisos necesarios -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".Notificacion"
@@ -17,7 +19,7 @@
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/Theme.ServisurTelecomunicaciones">
 
-        <!-- Launcher principal -->
+        <!-- 🏁 Launcher -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -29,50 +31,29 @@
             </intent-filter>
         </activity>
 
-        <!-- Flujo de autenticación -->
-        <activity
-            android:name=".LoginActivity"
-            android:screenOrientation="portrait"
+        <!-- 🔐 Login y registro -->
+        <activity android:name=".LoginActivity" android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name=".RegisterActivity"
-            android:screenOrientation="portrait"
+        <activity android:name=".RegisterActivity" android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
-        <!-- Homes -->
-        <activity
-            android:name=".HomeActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name=".AdminHomeActivity"
-            android:screenOrientation="portrait" />
+        <!-- 🏠 Homes -->
+        <activity android:name=".HomeActivity" android:screenOrientation="portrait" />
+        <activity android:name=".AdminHomeActivity" android:screenOrientation="portrait" />
 
-        <!-- Incidencias -->
-        <activity
-            android:name=".IncidenciasListActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".IncidentActivity"
-            android:screenOrientation="portrait" />
+        <!-- 📋 Incidencias -->
+        <activity android:name=".IncidenciasListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".IncidentActivity" android:screenOrientation="portrait" />
+        <activity android:name=".FormularioAvisoActivity" android:screenOrientation="portrait" />
+        <activity android:name=".IncidenciaDetailActivity" android:screenOrientation="portrait" />
 
-        <!-- Editar perfil (nuevas separadas) -->
-        <activity
-            android:name=".EditarPerfilAdminActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".EditarPerfilClienteActivity"
-            android:screenOrientation="portrait" />
+        <!-- 🧍‍♂️ Perfil -->
+        <activity android:name=".EditarPerfilAdminActivity" android:screenOrientation="portrait" />
+        <activity android:name=".EditarPerfilClienteActivity" android:screenOrientation="portrait" />
 
-        <!-- Facturas & Presupuestos -->
-        <activity
-            android:name=".FacturasActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".PresupuestosActivity"
-            android:screenOrientation="portrait" />
-
-        <!-- Catálogos varios -->
+        <!-- 💼 Otros módulos -->
+        <activity android:name=".FacturasActivity" android:screenOrientation="portrait" />
+        <activity android:name=".PresupuestosActivity" android:screenOrientation="portrait" />
         <activity android:name=".AntenaActivity" android:screenOrientation="portrait" />
         <activity android:name=".VideoporteroActivity" android:screenOrientation="portrait" />
         <activity android:name=".CCTVActivity" android:screenOrientation="portrait" />
@@ -80,14 +61,10 @@
         <activity android:name=".ElectricidadActivity" android:screenOrientation="portrait" />
         <activity android:name=".MantenimientoActivity" android:screenOrientation="portrait" />
         <activity android:name=".AboutUsActivity" android:screenOrientation="portrait" />
-        <activity android:name=".FormularioAvisoActivity" android:screenOrientation="portrait" />
         <activity android:name=".PorteroInfoActivity" android:screenOrientation="portrait" />
         <activity android:name=".BrandInfoActivity" android:screenOrientation="portrait" />
-        <activity android:name=".IncidenciaDetailActivity" android:screenOrientation="portrait"/>
 
-        <!-- Meta-data de Firebase -->
-        <meta-data
-            android:name="com.google.firebase.database"
-            android:value="true" />
+        <!-- 🔥 Firebase -->
+        <meta-data android:name="com.google.firebase.database" android:value="true" />
     </application>
 </manifest>

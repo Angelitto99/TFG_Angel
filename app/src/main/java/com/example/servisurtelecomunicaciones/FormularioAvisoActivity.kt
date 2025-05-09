@@ -1,53 +1,79 @@
 package com.example.servisurtelecomunicaciones
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
-import com.example.servisurtelecomunicaciones.MailSender
+import java.io.File
+import java.io.FileOutputStream
 
-class  FormularioAvisoActivity : AppCompatActivity() {
+class FormularioAvisoActivity : AppCompatActivity() {
 
-    // Configuración de Email (remitente y receptor)
-    private val EMAIL_ORIGEN = "servisuravisosapp76@gmail.com"   // Cuenta remitente
-    private val PASSWORD_EMAIL = "bnlw vwgr xbpf nqma"                     // Contraseña o App Password
-    private val EMAIL_DESTINO = "telecomunicacionesservisur8@gmail.com"  // Cuenta que recibe el aviso
+    private val EMAIL_ORIGEN = "servisuravisosapp76@gmail.com"
+    private val PASSWORD_EMAIL = "bnlwvwgrxbpfnqma"
+    private val EMAIL_DESTINO = "telecomunicacionesservisur8@gmail.com"
+
+    private lateinit var nombreEditText: EditText
+    private lateinit var phoneEditText: EditText
+    private lateinit var direccionEditText: EditText
+    private lateinit var descripcionEditText: EditText
+    private lateinit var btnEnviar: Button
+    private lateinit var btnSelectImage: Button
+    private lateinit var imageView: ImageView
+
+    private var selectedImageUri: Uri? = null
+    private var tempImageFile: File? = null
+    private val IMAGE_PICK_CODE = 1001
+    private val IMAGE_CAMERA_CODE = 1002
+    private val CAMERA_PERMISSION_CODE = 2001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_formulario_aviso)
 
-        val nombreEditText = findViewById<EditText>(R.id.editTextNombre)
-        val phoneEditText = findViewById<EditText>(R.id.editTextTelefono) // Nuevo campo de teléfono
-        val direccionEditText = findViewById<EditText>(R.id.editTextDireccion)
-        val descripcionEditText = findViewById<EditText>(R.id.editTextDescripcion)
-        val btnEnviar = findViewById<Button>(R.id.btnEnviar)
-        val logoImageView = findViewById<ImageView>(R.id.logoImage)
-        // Si deseas cargar el logo con Glide, descomenta la siguiente línea:
-        // Glide.with(this).load(R.drawable.ic_servisur).into(logoImageView)
+        nombreEditText = findViewById(R.id.editTextNombre)
+        phoneEditText = findViewById(R.id.editTextTelefono)
+        direccionEditText = findViewById(R.id.editTextDireccion)
+        descripcionEditText = findViewById(R.id.editTextDescripcion)
+        btnEnviar = findViewById(R.id.btnEnviar)
+        btnSelectImage = findViewById(R.id.btnSelectImage)
+        imageView = findViewById(R.id.imagePreview)
 
-        // Configurar el campo de teléfono para forzar +34 y limitar a 9 dígitos adicionales
+        imageView.visibility = ImageView.GONE
         setupPhoneEditText(phoneEditText)
+
+        btnSelectImage.setOnClickListener {
+            val opciones = arrayOf("Galería", "Cámara")
+            AlertDialog.Builder(this)
+                .setTitle("Seleccionar imagen")
+                .setItems(opciones) { _, index ->
+                    if (index == 0) pickImageFromGallery()
+                    else checkCameraPermissionAndCapture()
+                }.show()
+        }
 
         btnEnviar.setOnClickListener {
             val nombre = nombreEditText.text.toString().trim()
-            val telefono = phoneEditText.text.toString().trim()  // Debe tener el formato "+34XXXXXXXXX"
+            val telefono = phoneEditText.text.toString().trim()
             val direccion = direccionEditText.text.toString().trim()
             val descripcion = descripcionEditText.text.toString().trim()
 
             if (nombre.isEmpty() || telefono.isEmpty() || direccion.isEmpty() || descripcion.isEmpty()) {
                 showCenteredToast("Por favor, rellene todos los campos")
             } else {
-                // Obtener el email del usuario logueado (si no, se mostrará "Desconocido")
                 val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email ?: "Desconocido"
-
-                // Prepara el cuerpo del correo; notar que ahora indicamos "Nueva Incidencia"
                 val mensaje = """
                     Se ha registrado una nueva incidencia:
                     Usuario: $currentUserEmail
@@ -57,12 +83,14 @@ class  FormularioAvisoActivity : AppCompatActivity() {
                     Descripción: $descripcion
                 """.trimIndent()
 
-                // Enviar el correo en un hilo secundario para no bloquear la UI
                 Thread {
                     try {
                         val mailSender = MailSender(EMAIL_ORIGEN, PASSWORD_EMAIL)
-                        // Cambiar el asunto a "Nueva Incidencia"
-                        mailSender.sendMail("Nueva Incidencia", mensaje, EMAIL_DESTINO)
+                        if (tempImageFile != null && tempImageFile!!.exists()) {
+                            mailSender.sendMailWithAttachment("Nueva Incidencia", mensaje, EMAIL_DESTINO, tempImageFile!!.absolutePath)
+                        } else {
+                            mailSender.sendMail("Nueva Incidencia", mensaje, EMAIL_DESTINO)
+                        }
                         runOnUiThread {
                             showCenteredToast("Incidencia enviada correctamente")
                             finish()
@@ -78,27 +106,87 @@ class  FormularioAvisoActivity : AppCompatActivity() {
         }
     }
 
-    // Función para configurar el campo de teléfono con el prefijo +34 y limitar a 12 caracteres en total
+    private fun checkCameraPermissionAndCapture() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
+        } else {
+            captureFromCamera()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                captureFromCamera()
+            } else {
+                showCenteredToast("Permiso de cámara denegado")
+            }
+        }
+    }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, IMAGE_PICK_CODE)
+    }
+
+    private fun captureFromCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, IMAGE_CAMERA_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK) return
+
+        when (requestCode) {
+            IMAGE_PICK_CODE -> {
+                data?.data?.let { uri ->
+                    val file = File(cacheDir, "image_aviso.jpg")
+                    contentResolver.openInputStream(uri)?.use { input ->
+                        FileOutputStream(file).use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                    tempImageFile = file
+                    selectedImageUri = uri
+                    imageView.setImageURI(uri)
+                    imageView.visibility = ImageView.VISIBLE
+                }
+            }
+
+            IMAGE_CAMERA_CODE -> {
+                val photo = data?.extras?.get("data") as? android.graphics.Bitmap
+                photo?.let {
+                    val file = File(cacheDir, "captured_aviso.jpg")
+                    FileOutputStream(file).use { out ->
+                        it.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, out)
+                    }
+                    tempImageFile = file
+                    selectedImageUri = Uri.fromFile(file)
+                    imageView.setImageBitmap(it)
+                    imageView.visibility = ImageView.VISIBLE
+                }
+            }
+        }
+    }
+
     private fun setupPhoneEditText(phoneEditText: EditText) {
         phoneEditText.setText("+34")
         phoneEditText.setSelection(phoneEditText.text.length)
         phoneEditText.addTextChangedListener(object : TextWatcher {
             private var isEditing = false
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable?) {
                 if (isEditing) return
                 isEditing = true
-                if (s != null) {
-                    // Forzar que siempre inicie con "+34"
-                    if (!s.toString().startsWith("+34")) {
+                s?.let {
+                    if (!it.startsWith("+34")) {
                         phoneEditText.setText("+34")
                         phoneEditText.setSelection(phoneEditText.text.length)
-                    } else if (s.length > 12) { // "+34" + 9 dígitos = 12 caracteres
-                        val trimmed = s.substring(0, 12)
+                    } else if (it.length > 12) {
+                        val trimmed = it.substring(0, 12)
                         phoneEditText.setText(trimmed)
                         phoneEditText.setSelection(trimmed.length)
                     }
@@ -109,8 +197,9 @@ class  FormularioAvisoActivity : AppCompatActivity() {
     }
 
     private fun showCenteredToast(message: String) {
-        val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
-        toast.setGravity(Gravity.CENTER, 0, 500)
-        toast.show()
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).apply {
+            setGravity(Gravity.CENTER, 0, 500)
+            show()
+        }
     }
 }

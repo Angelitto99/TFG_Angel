@@ -1,7 +1,9 @@
 package com.example.servisurtelecomunicaciones
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -11,6 +13,8 @@ import android.view.Gravity
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import java.io.File
@@ -31,8 +35,10 @@ class IncidentActivity : AppCompatActivity() {
     private lateinit var btnEnviar: Button
 
     private var selectedImageUri: Uri? = null
+    private var tempImageFile: File? = null
     private val IMAGE_PICK_CODE = 1001
     private val IMAGE_CAMERA_CODE = 1002
+    private val CAMERA_PERMISSION_CODE = 2001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +60,7 @@ class IncidentActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setTitle("Seleccionar imagen")
                 .setItems(opciones) { _, index ->
-                    if (index == 0) pickImageFromGallery() else captureFromCamera()
+                    if (index == 0) pickImageFromGallery() else checkCameraPermissionAndCapture()
                 }.show()
         }
 
@@ -70,6 +76,25 @@ class IncidentActivity : AppCompatActivity() {
             } else {
                 showCenteredToast("Por favor completa todos los campos correctamente.")
                 btnEnviar.isEnabled = true
+            }
+        }
+    }
+
+    private fun checkCameraPermissionAndCapture() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
+        } else {
+            captureFromCamera()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                captureFromCamera()
+            } else {
+                showCenteredToast("Permiso de cámara denegado")
             }
         }
     }
@@ -90,9 +115,18 @@ class IncidentActivity : AppCompatActivity() {
 
         when (requestCode) {
             IMAGE_PICK_CODE -> {
-                selectedImageUri = data?.data
-                imageView.setImageURI(selectedImageUri)
-                imageView.visibility = ImageView.VISIBLE
+                data?.data?.let { uri ->
+                    val file = File(cacheDir, "image_attachment.jpg")
+                    contentResolver.openInputStream(uri)?.use { input ->
+                        FileOutputStream(file).use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                    tempImageFile = file
+                    selectedImageUri = uri
+                    imageView.setImageURI(uri)
+                    imageView.visibility = ImageView.VISIBLE
+                }
             }
 
             IMAGE_CAMERA_CODE -> {
@@ -102,6 +136,7 @@ class IncidentActivity : AppCompatActivity() {
                     FileOutputStream(file).use { out ->
                         it.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, out)
                     }
+                    tempImageFile = file
                     selectedImageUri = Uri.fromFile(file)
                     imageView.setImageBitmap(it)
                     imageView.visibility = ImageView.VISIBLE
@@ -124,9 +159,8 @@ class IncidentActivity : AppCompatActivity() {
                 """.trimIndent()
 
                 val sender = MailSender(EMAIL_ORIGEN, PASSWORD_EMAIL)
-                if (selectedImageUri != null) {
-                    val path = FileUtils.getPath(this, selectedImageUri!!)
-                    sender.sendMailWithAttachment("Nueva Incidencia", mensaje, EMAIL_DESTINO, path)
+                if (tempImageFile != null && tempImageFile!!.exists()) {
+                    sender.sendMailWithAttachment("Nueva Incidencia", mensaje, EMAIL_DESTINO, tempImageFile!!.absolutePath)
                 } else {
                     sender.sendMail("Nueva Incidencia", mensaje, EMAIL_DESTINO)
                 }
