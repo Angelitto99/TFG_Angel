@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -19,15 +20,15 @@ import androidx.work.WorkManager
 import com.google.android.material.textfield.TextInputEditText
 import de.hdodenhof.circleimageview.CircleImageView
 
-class EditarPerfilActivity : AppCompatActivity() {
+class EditarPerfilClienteActivity : AppCompatActivity() {
 
     companion object {
         private const val PREFS = "prefs"
         private const val KEY_NAME = "user_name"
         private const val KEY_AVATAR = "user_avatar"
-        private const val KEY_NOTIFS = "user_notifs"
         private const val KEY_PHONE = "user_phone"
         private const val KEY_COMPANY = "user_company"
+        private const val KEY_NOTIFS = "user_notifs"
         private const val RC_PICK_PHOTO = 1001
         private const val RC_NOTIF_PERM = 2001
     }
@@ -39,10 +40,11 @@ class EditarPerfilActivity : AppCompatActivity() {
     private lateinit var swNotifs: Switch
     private lateinit var btnGuardar: Button
     private lateinit var btnCambiarPass: Button
+    private lateinit var tvHolaUsuario: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_editar_perfil)
+        setContentView(R.layout.activity_editar_perfil_cliente)
 
         ivAvatar = findViewById(R.id.ivAvatar)
         etNombre = findViewById(R.id.etNombre)
@@ -51,21 +53,25 @@ class EditarPerfilActivity : AppCompatActivity() {
         swNotifs = findViewById(R.id.swNotifs)
         btnGuardar = findViewById(R.id.btnGuardarPerfil)
         btnCambiarPass = findViewById(R.id.btnCambiarPass)
+        tvHolaUsuario = findViewById(R.id.tvHolaUsuario)
 
         val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val isAdmin = prefs.getBoolean("is_admin", false)
-        val nameKey = if (isAdmin) "admin_name" else KEY_NAME
-        val avatarKey = if (isAdmin) "admin_avatar" else KEY_AVATAR
-        val phoneKey = if (isAdmin) "admin_phone" else KEY_PHONE
-        val companyKey = if (isAdmin) "admin_company" else KEY_COMPANY
 
-        etNombre.setText(prefs.getString(nameKey, ""))
-        etTelefono.setText(prefs.getString(phoneKey, ""))
-        etEmpresa.setText(prefs.getString(companyKey, ""))
+        etNombre.setText(prefs.getString(KEY_NAME, ""))
+        etTelefono.setText(prefs.getString(KEY_PHONE, ""))
+        etEmpresa.setText(prefs.getString(KEY_COMPANY, ""))
         swNotifs.isChecked = prefs.getBoolean(KEY_NOTIFS, false)
+        tvHolaUsuario.text = "Hola, ${prefs.getString(KEY_NAME, "Usuario")}"
 
-        prefs.getString(avatarKey, null)?.let {
-            ivAvatar.setImageURI(Uri.parse(it))
+        prefs.getString(KEY_AVATAR, null)?.let { uriString ->
+            try {
+                val inputStream = contentResolver.openInputStream(Uri.parse(uriString))
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                ivAvatar.setImageBitmap(bitmap)
+                inputStream?.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         ivAvatar.setOnClickListener { pickImage() }
@@ -74,11 +80,10 @@ class EditarPerfilActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                val maxLength = 9
                 s?.let {
-                    if (it.length > maxLength) {
-                        etTelefono.setText(it.substring(0, maxLength))
-                        etTelefono.setSelection(maxLength)
+                    if (it.length > 9) {
+                        etTelefono.setText(it.substring(0, 9))
+                        etTelefono.setSelection(9)
                     }
                 }
             }
@@ -86,11 +91,13 @@ class EditarPerfilActivity : AppCompatActivity() {
 
         btnGuardar.setOnClickListener {
             prefs.edit()
-                .putString(nameKey, etNombre.text.toString())
-                .putString(phoneKey, etTelefono.text.toString())
-                .putString(companyKey, etEmpresa.text.toString())
+                .putString(KEY_NAME, etNombre.text.toString())
+                .putString(KEY_PHONE, etTelefono.text.toString())
+                .putString(KEY_COMPANY, etEmpresa.text.toString())
                 .putBoolean(KEY_NOTIFS, swNotifs.isChecked)
                 .apply()
+
+            tvHolaUsuario.text = "Hola, ${etNombre.text.toString()}"
 
             if (swNotifs.isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -102,26 +109,10 @@ class EditarPerfilActivity : AppCompatActivity() {
                         RC_NOTIF_PERM
                     )
                 } else {
-                    if (!isAdmin) {
-                        ClienteNotifsWorker.scheduleWeekly(this)
-                    } else {
-                        val request = androidx.work.PeriodicWorkRequestBuilder<PendientesWorker>(1, java.util.concurrent.TimeUnit.DAYS)
-                            .setInitialDelay(10, java.util.concurrent.TimeUnit.SECONDS) // para pruebas
-                            .build()
-
-                        androidx.work.WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                            "pendientes_diarios",
-                            androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
-                            request
-                        )
-                    }
+                    ClienteNotifsWorker.scheduleWeekly(this)
                 }
             } else {
-                if (!isAdmin) {
-                    WorkManager.getInstance(this).cancelAllWorkByTag("cliente_revision_semanal")
-                } else {
-                    WorkManager.getInstance(this).cancelAllWorkByTag("pendientes_diarios")
-                }
+                WorkManager.getInstance(this).cancelAllWorkByTag("cliente_revision_semanal")
             }
 
             Toast.makeText(this, "Perfil guardado", Toast.LENGTH_SHORT).show()
@@ -141,14 +132,20 @@ class EditarPerfilActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val isAdmin = getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean("is_admin", false)
-        val avatarKey = if (isAdmin) "admin_avatar" else KEY_AVATAR
         if (requestCode == RC_PICK_PHOTO && resultCode == Activity.RESULT_OK) {
             data?.data?.let { uri ->
-                ivAvatar.setImageURI(uri)
+                try {
+                    val inputStream = contentResolver.openInputStream(uri)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    ivAvatar.setImageBitmap(bitmap)
+                    inputStream?.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
                 getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                     .edit()
-                    .putString(avatarKey, uri.toString())
+                    .putString(KEY_AVATAR, uri.toString())
                     .apply()
             }
         }
@@ -157,20 +154,7 @@ class EditarPerfilActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RC_NOTIF_PERM && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            val isAdmin = getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean("is_admin", false)
-            if (!isAdmin) {
-                ClienteNotifsWorker.scheduleWeekly(this)
-            } else {
-                val request = androidx.work.PeriodicWorkRequestBuilder<PendientesWorker>(1, java.util.concurrent.TimeUnit.DAYS)
-                    .setInitialDelay(10, java.util.concurrent.TimeUnit.SECONDS)
-                    .build()
-
-                androidx.work.WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                    "pendientes_diarios",
-                    androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
-                    request
-                )
-            }
+            ClienteNotifsWorker.scheduleWeekly(this)
         }
     }
 }

@@ -27,63 +27,47 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        // Avatar y saludo
         ivAvatar = findViewById(R.id.ivUserAvatar)
         tvGreeting = findViewById(R.id.tvHolaUsuario)
 
         ivAvatar.setOnClickListener {
-            startActivity(Intent(this, EditarPerfilActivity::class.java))
+            startActivity(Intent(this, EditarPerfilClienteActivity::class.java))
         }
 
-        // Antenas
-        val cardAntenas = findViewById<CardView>(R.id.Antenas)
-        val iconAntenas = findViewById<ImageView>(R.id.iconSatelliteTV)
-        Glide.with(this).load(R.drawable.ic_satellite).override(48, 48).centerInside().into(iconAntenas)
-        cardAntenas.setOnClickListener {
-            startActivity(Intent(this, AntenaActivity::class.java))
+        findViewById<CardView>(R.id.Antenas).apply {
+            setOnClickListener { startActivity(Intent(context, AntenaActivity::class.java)) }
         }
 
-        // Videoporteros
-        val cardVideoporteros = findViewById<CardView>(R.id.cardVideoporteros)
-        val iconVideoporteros = findViewById<ImageView>(R.id.iconVideoporteros)
-        Glide.with(this).load(R.drawable.ic_videoportero).override(48, 48).centerInside().into(iconVideoporteros)
-        cardVideoporteros.setOnClickListener {
-            startActivity(Intent(this, VideoporteroActivity::class.java))
-        }
+        Glide.with(this).load(R.drawable.ic_satellite).override(48, 48)
+            .centerInside().into(findViewById(R.id.iconSatelliteTV))
 
-        // Electricidad
-        val cardElectricidad = findViewById<CardView>(R.id.cardElectricidad)
-        val iconElectricidad = findViewById<ImageView>(R.id.iconElectricidad)
-        Glide.with(this).load(R.drawable.ic_electricidad).override(48, 48).centerInside().into(iconElectricidad)
-        cardElectricidad.setOnClickListener {
-            startActivity(Intent(this, ElectricidadActivity::class.java))
+        findViewById<CardView>(R.id.cardVideoporteros).apply {
+            setOnClickListener { startActivity(Intent(context, VideoporteroActivity::class.java)) }
         }
+        Glide.with(this).load(R.drawable.ic_videoportero).override(48, 48)
+            .centerInside().into(findViewById(R.id.iconVideoporteros))
 
-        // CCTV
-        val cardCCTV = findViewById<CardView>(R.id.cardCCTV)
-        val iconCCTV = findViewById<ImageView>(R.id.iconCCTV)
-        iconCCTV.setImageResource(R.drawable.ic_cctv)
-        cardCCTV.setOnClickListener {
-            startActivity(Intent(this, CCTVActivity::class.java))
+        findViewById<CardView>(R.id.cardElectricidad).apply {
+            setOnClickListener { startActivity(Intent(context, ElectricidadActivity::class.java)) }
         }
+        Glide.with(this).load(R.drawable.ic_electricidad).override(48, 48)
+            .centerInside().into(findViewById(R.id.iconElectricidad))
 
-        // Cerrajería
-        val cardCerrajeria = findViewById<CardView>(R.id.cardCerrajeria)
-        val iconCerrajeria = findViewById<ImageView>(R.id.iconCerrajeria)
-        iconCerrajeria.setImageResource(R.drawable.ic_cerrajeria)
-        cardCerrajeria.setOnClickListener {
-            startActivity(Intent(this, CerrajeriaActivity::class.java))
+        findViewById<CardView>(R.id.cardCCTV).apply {
+            setOnClickListener { startActivity(Intent(context, CCTVActivity::class.java)) }
         }
+        findViewById<ImageView>(R.id.iconCCTV).setImageResource(R.drawable.ic_cctv)
 
-        // Mantenimiento
-        val cardMantenimiento = findViewById<CardView>(R.id.cardMantenimiento)
-        val iconMantenimiento = findViewById<ImageView>(R.id.iconMantenimiento)
-        iconMantenimiento.setImageResource(R.drawable.ic_mantenimiento)
-        cardMantenimiento.setOnClickListener {
-            startActivity(Intent(this, MantenimientoActivity::class.java))
+        findViewById<CardView>(R.id.cardCerrajeria).apply {
+            setOnClickListener { startActivity(Intent(context, CerrajeriaActivity::class.java)) }
         }
+        findViewById<ImageView>(R.id.iconCerrajeria).setImageResource(R.drawable.ic_cerrajeria)
 
-        // Botones inferiores
+        findViewById<CardView>(R.id.cardMantenimiento).apply {
+            setOnClickListener { startActivity(Intent(context, MantenimientoActivity::class.java)) }
+        }
+        findViewById<ImageView>(R.id.iconMantenimiento).setImageResource(R.drawable.ic_mantenimiento)
+
         findViewById<Button>(R.id.buttonAboutUs).setOnClickListener {
             startActivity(Intent(this, AboutUsActivity::class.java))
         }
@@ -102,9 +86,9 @@ class HomeActivity : AppCompatActivity() {
             Toast.makeText(this, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).apply {
                 setGravity(Gravity.CENTER, 0, 0)
             }.show()
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+            startActivity(Intent(this, LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
             finish()
         }
     }

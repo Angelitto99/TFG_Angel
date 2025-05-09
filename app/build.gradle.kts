@@ -30,6 +30,20 @@ android {
         }
     }
 
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{LICENSE,NOTICE,NOTICE.md,LICENSE.md}"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -57,6 +71,13 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("androidx.cardview:cardview:1.0.0")
+
+    // Jetpack Compose
+    implementation("androidx.compose.ui:ui:1.5.10")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha10")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.10")
+    implementation("androidx.activity:activity-compose:1.7.2")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.5.10")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

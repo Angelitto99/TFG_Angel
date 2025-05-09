@@ -56,9 +56,12 @@
             android:name=".IncidentActivity"
             android:screenOrientation="portrait" />
 
-        <!-- Editar perfil -->
+        <!-- Editar perfil (nuevas separadas) -->
         <activity
-            android:name=".EditarPerfilActivity"
+            android:name=".EditarPerfilAdminActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EditarPerfilClienteActivity"
             android:screenOrientation="portrait" />
 
         <!-- Facturas & Presupuestos -->
@@ -82,7 +85,7 @@
         <activity android:name=".BrandInfoActivity" android:screenOrientation="portrait" />
         <activity android:name=".IncidenciaDetailActivity" android:screenOrientation="portrait"/>
 
-        <!-- Meta-data de Firebase (opcional) -->
+        <!-- Meta-data de Firebase -->
         <meta-data
             android:name="com.google.firebase.database"
             android:value="true" />

@@ -82,6 +82,7 @@
 
         <!-- Switch de notificaciones -->
         <LinearLayout
+            android:id="@+id/layoutSwitch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -104,27 +105,33 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <!-- Botón Cambiar contraseña -->
-        <Button
-            android:id="@+id/btnCambiarPass"
+        <!-- Botones finales abajo -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CAMBIAR CONTRASEÑA"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="@color/teal_700"
-            android:textColor="@android:color/white"
-            android:textAllCaps="true" />
+            android:orientation="vertical"
+            android:layout_marginTop="48dp">
 
-        <!-- Botón Guardar -->
-        <Button
-            android:id="@+id/btnGuardarPerfil"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="GUARDAR"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
-            android:backgroundTint="@color/purple_500"
-            android:textColor="@android:color/white"
-            android:textAllCaps="true" />
+            <Button
+                android:id="@+id/btnCambiarPass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CAMBIAR CONTRASEÑA"
+                android:backgroundTint="@color/teal_700"
+                android:textColor="@android:color/white"
+                android:textAllCaps="true" />
+
+            <Button
+                android:id="@+id/btnGuardarPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GUARDAR"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp"
+                android:backgroundTint="@color/purple_500"
+                android:textColor="@android:color/white"
+                android:textAllCaps="true" />
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

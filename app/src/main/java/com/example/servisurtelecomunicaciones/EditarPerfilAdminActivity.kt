@@ -1,0 +1,177 @@
+package com.example.servisurtelecomunicaciones
+
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.work.WorkManager
+import com.google.android.material.textfield.TextInputEditText
+import de.hdodenhof.circleimageview.CircleImageView
+
+class EditarPerfilAdminActivity : AppCompatActivity() {
+
+    companion object {
+        private const val PREFS = "prefs"
+        private const val KEY_NAME = "admin_name"
+        private const val KEY_AVATAR = "admin_avatar"
+        private const val KEY_NOTIFS = "user_notifs"
+        private const val KEY_PHONE = "admin_phone"
+        private const val KEY_COMPANY = "admin_company"
+        private const val RC_PICK_PHOTO = 1001
+        private const val RC_NOTIF_PERM = 2001
+    }
+
+    private lateinit var ivAvatar: CircleImageView
+    private lateinit var etNombre: TextInputEditText
+    private lateinit var etTelefono: TextInputEditText
+    private lateinit var etEmpresa: TextInputEditText
+    private lateinit var swNotifs: Switch
+    private lateinit var btnGuardar: Button
+    private lateinit var btnCambiarPass: Button
+    private lateinit var tvSaludo: TextView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_editar_perfil_admin)
+
+        ivAvatar = findViewById(R.id.ivAvatar)
+        etNombre = findViewById(R.id.etNombre)
+        etTelefono = findViewById(R.id.etTelefono)
+        etEmpresa = findViewById(R.id.etEmpresa)
+        swNotifs = findViewById(R.id.swNotifs)
+        btnGuardar = findViewById(R.id.btnGuardarPerfil)
+        btnCambiarPass = findViewById(R.id.btnCambiarPass)
+        tvSaludo = findViewById(R.id.tvHolaUsuario)
+
+        val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+
+        etNombre.setText(prefs.getString(KEY_NAME, ""))
+        etTelefono.setText(prefs.getString(KEY_PHONE, ""))
+        etEmpresa.setText(prefs.getString(KEY_COMPANY, ""))
+        swNotifs.isChecked = prefs.getBoolean(KEY_NOTIFS, false)
+
+        tvSaludo.text = "Hola, ${etNombre.text}" // saludo dinámico
+
+        prefs.getString(KEY_AVATAR, null)?.let { uriString ->
+            try {
+                val inputStream = contentResolver.openInputStream(Uri.parse(uriString))
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                ivAvatar.setImageBitmap(bitmap)
+                inputStream?.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        ivAvatar.setOnClickListener { pickImage() }
+
+        etTelefono.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                s?.let {
+                    if (it.length > 9) {
+                        etTelefono.setText(it.substring(0, 9))
+                        etTelefono.setSelection(9)
+                    }
+                }
+            }
+        })
+
+        btnGuardar.setOnClickListener {
+            prefs.edit()
+                .putString(KEY_NAME, etNombre.text.toString())
+                .putString(KEY_PHONE, etTelefono.text.toString())
+                .putString(KEY_COMPANY, etEmpresa.text.toString())
+                .putBoolean(KEY_NOTIFS, swNotifs.isChecked)
+                .apply()
+
+            tvSaludo.text = "Hola, ${etNombre.text}"
+
+            if (swNotifs.isChecked) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                        RC_NOTIF_PERM
+                    )
+                } else {
+                    val request = androidx.work.PeriodicWorkRequestBuilder<PendientesWorker>(1, java.util.concurrent.TimeUnit.DAYS)
+                        .setInitialDelay(10, java.util.concurrent.TimeUnit.SECONDS)
+                        .build()
+
+                    WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                        "pendientes_diarios",
+                        androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
+                        request
+                    )
+                }
+            } else {
+                WorkManager.getInstance(this).cancelAllWorkByTag("pendientes_diarios")
+            }
+
+            Toast.makeText(this, "Perfil guardado", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
+        btnCambiarPass.setOnClickListener {
+            startActivity(Intent(this, CambiarPasswordActivity::class.java))
+        }
+    }
+
+    private fun pickImage() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        startActivityForResult(intent, RC_PICK_PHOTO)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_PICK_PHOTO && resultCode == Activity.RESULT_OK) {
+            data?.data?.let { uri ->
+                try {
+                    val inputStream = contentResolver.openInputStream(uri)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    ivAvatar.setImageBitmap(bitmap)
+                    inputStream?.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+                getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                    .edit()
+                    .putString(KEY_AVATAR, uri.toString())
+                    .apply()
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == RC_NOTIF_PERM && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            val request = androidx.work.PeriodicWorkRequestBuilder<PendientesWorker>(1, java.util.concurrent.TimeUnit.DAYS)
+                .setInitialDelay(10, java.util.concurrent.TimeUnit.SECONDS)
+                .build()
+
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "pendientes_diarios",
+                androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
+                request
+            )
+        }
+    }
+}

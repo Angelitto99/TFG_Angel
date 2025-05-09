@@ -1,5 +1,6 @@
 package com.example.servisurtelecomunicaciones
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
@@ -17,6 +18,8 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+
         auth = FirebaseAuth.getInstance()
 
         val emailEditText = findViewById<EditText>(R.id.email)
@@ -28,20 +31,20 @@ class RegisterActivity : AppCompatActivity() {
             val password = passwordEditText.text.toString()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                registerUser(email, password)
+                registerUser(email, password, prefs)
             } else {
                 showCenteredToast("Completa todos los campos")
             }
         }
     }
 
-    // ✅ Función para registrar usuario en Firebase
-    private fun registerUser(email: String, password: String) {
+    private fun registerUser(email: String, password: String, prefs: android.content.SharedPreferences) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    prefs.edit().putBoolean("is_admin", false).apply()
                     showCenteredToast("Registro exitoso")
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(this, HomeActivity::class.java))
                     finish()
                 } else {
                     showCenteredToast("Error: ${task.exception?.message}")
@@ -49,7 +52,6 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
-    // ✅ Función para centrar los Toasts
     private fun showCenteredToast(message: String) {
         val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
         toast.setGravity(Gravity.CENTER, 0, 0)

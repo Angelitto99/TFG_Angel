@@ -1,4 +1,3 @@
-// AdminHomeActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.content.Context
@@ -19,8 +18,8 @@ class AdminHomeActivity : AppCompatActivity() {
 
     companion object {
         private const val PREFS = "prefs"
-        private const val KEY_NAME = "user_name"
-        private const val KEY_AVATAR = "user_avatar"
+        private const val KEY_NAME = "admin_name"
+        private const val KEY_AVATAR = "admin_avatar"
     }
 
     private lateinit var ivAvatar: CircleImageView
@@ -37,7 +36,7 @@ class AdminHomeActivity : AppCompatActivity() {
         btnLogout   = findViewById(R.id.btnCerrarSesionAdmin)
 
         ivAvatar.setOnClickListener {
-            startActivity(Intent(this, EditarPerfilActivity::class.java))
+            startActivity(Intent(this, EditarPerfilAdminActivity::class.java))
         }
 
         findViewById<CardView>(R.id.cardVerIncidencias).setOnClickListener {
@@ -69,20 +68,17 @@ class AdminHomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        // Cargar nombre y avatar de SharedPreferences
         val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val nombre = prefs.getString(KEY_NAME, "Admin") ?: "Admin"
         tvGreeting.text = "Hola, $nombre"
 
         val avatarUri = prefs.getString(KEY_AVATAR, null)
         if (avatarUri != null) {
-            // Glide puede cargar también URIs locales
             Glide.with(this)
                 .load(Uri.parse(avatarUri))
                 .placeholder(R.drawable.ic_perfil)
                 .into(ivAvatar)
         } else {
-            // Imagen por defecto
             ivAvatar.setImageResource(R.drawable.ic_perfil)
         }
     }
