@@ -38,19 +38,19 @@ class HomeActivity : AppCompatActivity() {
             setOnClickListener { startActivity(Intent(context, AntenaActivity::class.java)) }
         }
 
-        Glide.with(this).load(R.drawable.ic_satellite).override(48, 48)
+        Glide.with(this).load(R.drawable.ic_satellite_new).override(48, 48)
             .centerInside().into(findViewById(R.id.iconSatelliteTV))
 
         findViewById<CardView>(R.id.cardVideoporteros).apply {
             setOnClickListener { startActivity(Intent(context, VideoporteroActivity::class.java)) }
         }
-        Glide.with(this).load(R.drawable.ic_videoportero).override(48, 48)
+        Glide.with(this).load(R.drawable.ic_videoportero_new).override(48, 48)
             .centerInside().into(findViewById(R.id.iconVideoporteros))
 
         findViewById<CardView>(R.id.cardElectricidad).apply {
             setOnClickListener { startActivity(Intent(context, ElectricidadActivity::class.java)) }
         }
-        Glide.with(this).load(R.drawable.ic_electricidad).override(48, 48)
+        Glide.with(this).load(R.drawable.ic_electricidad_new).override(48, 48)
             .centerInside().into(findViewById(R.id.iconElectricidad))
 
         findViewById<CardView>(R.id.cardCCTV).apply {

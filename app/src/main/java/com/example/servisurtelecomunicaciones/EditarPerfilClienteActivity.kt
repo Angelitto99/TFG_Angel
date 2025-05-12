@@ -95,9 +95,10 @@ class EditarPerfilClienteActivity : AppCompatActivity() {
                 .putString(KEY_PHONE, etTelefono.text.toString())
                 .putString(KEY_COMPANY, etEmpresa.text.toString())
                 .putBoolean(KEY_NOTIFS, swNotifs.isChecked)
+                .putBoolean("is_admin", false) // Aseguramos que no es admin
                 .apply()
 
-            tvHolaUsuario.text = "Hola, ${etNombre.text.toString()}"
+            tvHolaUsuario.text = "Hola, ${etNombre.text}"
 
             if (swNotifs.isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&

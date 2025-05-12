@@ -50,6 +50,7 @@
         <!-- 🧍‍♂️ Perfil -->
         <activity android:name=".EditarPerfilAdminActivity" android:screenOrientation="portrait" />
         <activity android:name=".EditarPerfilClienteActivity" android:screenOrientation="portrait" />
+        <activity android:name=".CambiarPasswordActivity" android:screenOrientation="portrait" />
 
         <!-- 💼 Otros módulos -->
         <activity android:name=".FacturasActivity" android:screenOrientation="portrait" />

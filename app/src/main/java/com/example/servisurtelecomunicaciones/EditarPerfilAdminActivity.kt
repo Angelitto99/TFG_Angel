@@ -16,9 +16,13 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.material.textfield.TextInputEditText
 import de.hdodenhof.circleimageview.CircleImageView
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 class EditarPerfilAdminActivity : AppCompatActivity() {
 
@@ -96,6 +100,7 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
                 .putString(KEY_PHONE, etTelefono.text.toString())
                 .putString(KEY_COMPANY, etEmpresa.text.toString())
                 .putBoolean(KEY_NOTIFS, swNotifs.isChecked)
+                .putBoolean("is_admin", true)
                 .apply()
 
             tvSaludo.text = "Hola, ${etNombre.text}"
@@ -110,15 +115,7 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
                         RC_NOTIF_PERM
                     )
                 } else {
-                    val request = androidx.work.PeriodicWorkRequestBuilder<PendientesWorker>(1, java.util.concurrent.TimeUnit.DAYS)
-                        .setInitialDelay(10, java.util.concurrent.TimeUnit.SECONDS)
-                        .build()
-
-                    WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                        "pendientes_diarios",
-                        androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
-                        request
-                    )
+                    scheduleAdminNotifications()
                 }
             } else {
                 WorkManager.getInstance(this).cancelAllWorkByTag("pendientes_diarios")
@@ -131,6 +128,29 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
         btnCambiarPass.setOnClickListener {
             startActivity(Intent(this, CambiarPasswordActivity::class.java))
         }
+    }
+
+    private fun scheduleAdminNotifications() {
+        val now = Calendar.getInstance()
+        val next = now.clone() as Calendar
+        next.set(Calendar.HOUR_OF_DAY, 10)
+        next.set(Calendar.MINUTE, 0)
+        next.set(Calendar.SECOND, 0)
+
+        if (now.after(next)) next.add(Calendar.DAY_OF_YEAR, 1)
+
+        val delay = next.timeInMillis - now.timeInMillis
+
+        val request = PeriodicWorkRequestBuilder<AdminNotifsWorker>(1, TimeUnit.DAYS)
+            .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+            .addTag("pendientes_diarios")
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "pendientes_diarios",
+            ExistingPeriodicWorkPolicy.UPDATE,
+            request
+        )
     }
 
     private fun pickImage() {
@@ -163,15 +183,7 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RC_NOTIF_PERM && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            val request = androidx.work.PeriodicWorkRequestBuilder<PendientesWorker>(1, java.util.concurrent.TimeUnit.DAYS)
-                .setInitialDelay(10, java.util.concurrent.TimeUnit.SECONDS)
-                .build()
-
-            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                "pendientes_diarios",
-                androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
-                request
-            )
+            scheduleAdminNotifications()
         }
     }
 }

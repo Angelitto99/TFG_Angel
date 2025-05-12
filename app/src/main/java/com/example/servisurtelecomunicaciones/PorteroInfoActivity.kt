@@ -123,7 +123,7 @@ class PorteroInfoActivity : AppCompatActivity() {
                 R.drawable.ic_galak1,
                 R.drawable.ic_galak2
             )
-            else -> listOf(R.drawable.ic_videoportero)
+            else -> listOf(R.drawable.ic_videoportero_new)
         }
     }
 
