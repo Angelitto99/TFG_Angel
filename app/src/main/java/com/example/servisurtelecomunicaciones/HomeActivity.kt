@@ -37,21 +37,23 @@ class HomeActivity : AppCompatActivity() {
         findViewById<CardView>(R.id.Antenas).apply {
             setOnClickListener { startActivity(Intent(context, AntenaActivity::class.java)) }
         }
-
-        Glide.with(this).load(R.drawable.ic_satellite_new).override(48, 48)
-            .centerInside().into(findViewById(R.id.iconSatelliteTV))
+        Glide.with(this)
+            .load(R.drawable.ic_satellite_new)
+            .into(findViewById(R.id.iconSatelliteTV))
 
         findViewById<CardView>(R.id.cardVideoporteros).apply {
             setOnClickListener { startActivity(Intent(context, VideoporteroActivity::class.java)) }
         }
-        Glide.with(this).load(R.drawable.ic_videoportero_new).override(48, 48)
-            .centerInside().into(findViewById(R.id.iconVideoporteros))
+        Glide.with(this)
+            .load(R.drawable.ic_videoportero_new)
+            .into(findViewById(R.id.iconVideoporteros))
 
         findViewById<CardView>(R.id.cardElectricidad).apply {
             setOnClickListener { startActivity(Intent(context, ElectricidadActivity::class.java)) }
         }
-        Glide.with(this).load(R.drawable.ic_electricidad_new).override(48, 48)
-            .centerInside().into(findViewById(R.id.iconElectricidad))
+        Glide.with(this)
+            .load(R.drawable.ic_electricidad_new)
+            .into(findViewById(R.id.iconElectricidad))
 
         findViewById<CardView>(R.id.cardCCTV).apply {
             setOnClickListener { startActivity(Intent(context, CCTVActivity::class.java)) }
