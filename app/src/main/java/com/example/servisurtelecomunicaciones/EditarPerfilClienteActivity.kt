@@ -1,3 +1,4 @@
+// EditarPerfilClienteActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.Manifest
@@ -12,13 +13,16 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.work.WorkManager
 import com.google.android.material.textfield.TextInputEditText
 import de.hdodenhof.circleimageview.CircleImageView
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 class EditarPerfilClienteActivity : AppCompatActivity() {
 
@@ -63,14 +67,12 @@ class EditarPerfilClienteActivity : AppCompatActivity() {
         swNotifs.isChecked = prefs.getBoolean(KEY_NOTIFS, false)
         tvHolaUsuario.text = "Hola, ${prefs.getString(KEY_NAME, "Usuario")}"
 
-        prefs.getString(KEY_AVATAR, null)?.let { uriString ->
-            try {
-                val inputStream = contentResolver.openInputStream(Uri.parse(uriString))
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                ivAvatar.setImageBitmap(bitmap)
-                inputStream?.close()
-            } catch (e: Exception) {
-                e.printStackTrace()
+        prefs.getString(KEY_AVATAR, null)?.let { path ->
+            val file = File(path)
+            if (file.exists()) {
+                ivAvatar.setImageBitmap(BitmapFactory.decodeFile(file.absolutePath))
+            } else {
+                Log.d("EditarPerfil", "Avatar file not found at $path")
             }
         }
 
@@ -95,14 +97,15 @@ class EditarPerfilClienteActivity : AppCompatActivity() {
                 .putString(KEY_PHONE, etTelefono.text.toString())
                 .putString(KEY_COMPANY, etEmpresa.text.toString())
                 .putBoolean(KEY_NOTIFS, swNotifs.isChecked)
-                .putBoolean("is_admin", false) // Aseguramos que no es admin
+                .putBoolean("is_admin", false)
                 .apply()
 
             tvHolaUsuario.text = "Hola, ${etNombre.text}"
 
             if (swNotifs.isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED
                 ) {
                     ActivityCompat.requestPermissions(
                         this,
@@ -110,10 +113,10 @@ class EditarPerfilClienteActivity : AppCompatActivity() {
                         RC_NOTIF_PERM
                     )
                 } else {
-                    ClienteNotifsWorker.scheduleWeekly(this)
+                    AlarmManagerCliente.programarAlarmaSemanal(this)
                 }
             } else {
-                WorkManager.getInstance(this).cancelAllWorkByTag("cliente_revision_semanal")
+                AlarmManagerCliente.cancelarAlarma(this)
             }
 
             Toast.makeText(this, "Perfil guardado", Toast.LENGTH_SHORT).show()
@@ -136,18 +139,22 @@ class EditarPerfilClienteActivity : AppCompatActivity() {
         if (requestCode == RC_PICK_PHOTO && resultCode == Activity.RESULT_OK) {
             data?.data?.let { uri ->
                 try {
-                    val inputStream = contentResolver.openInputStream(uri)
-                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                    ivAvatar.setImageBitmap(bitmap)
+                    val inputStream: InputStream? = contentResolver.openInputStream(uri)
+                    val avatarFile = File(filesDir, "avatar_cliente.jpg")
+                    val outputStream = FileOutputStream(avatarFile)
+                    inputStream?.copyTo(outputStream)
+                    outputStream.close()
                     inputStream?.close()
+
+                    ivAvatar.setImageBitmap(BitmapFactory.decodeFile(avatarFile.absolutePath))
+
+                    getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                        .edit()
+                        .putString(KEY_AVATAR, avatarFile.absolutePath)
+                        .apply()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-
-                getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-                    .edit()
-                    .putString(KEY_AVATAR, uri.toString())
-                    .apply()
             }
         }
     }
@@ -155,7 +162,7 @@ class EditarPerfilClienteActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RC_NOTIF_PERM && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            ClienteNotifsWorker.scheduleWeekly(this)
+            AlarmManagerCliente.programarAlarmaSemanal(this)
         }
     }
 }

@@ -1,3 +1,4 @@
+// EditarPerfilAdminActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.Manifest
@@ -12,17 +13,16 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.google.android.material.textfield.TextInputEditText
 import de.hdodenhof.circleimageview.CircleImageView
-import java.util.Calendar
-import java.util.concurrent.TimeUnit
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 class EditarPerfilAdminActivity : AppCompatActivity() {
 
@@ -65,17 +65,14 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
         etTelefono.setText(prefs.getString(KEY_PHONE, ""))
         etEmpresa.setText(prefs.getString(KEY_COMPANY, ""))
         swNotifs.isChecked = prefs.getBoolean(KEY_NOTIFS, false)
+        tvSaludo.text = "Hola, ${etNombre.text}"
 
-        tvSaludo.text = "Hola, ${etNombre.text}" // saludo dinámico
-
-        prefs.getString(KEY_AVATAR, null)?.let { uriString ->
-            try {
-                val inputStream = contentResolver.openInputStream(Uri.parse(uriString))
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                ivAvatar.setImageBitmap(bitmap)
-                inputStream?.close()
-            } catch (e: Exception) {
-                e.printStackTrace()
+        prefs.getString(KEY_AVATAR, null)?.let { path ->
+            val file = File(path)
+            if (file.exists()) {
+                ivAvatar.setImageBitmap(BitmapFactory.decodeFile(file.absolutePath))
+            } else {
+                Log.d("EditarPerfilAdmin", "Avatar file not found at $path")
             }
         }
 
@@ -107,7 +104,8 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
 
             if (swNotifs.isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED
                 ) {
                     ActivityCompat.requestPermissions(
                         this,
@@ -115,10 +113,10 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
                         RC_NOTIF_PERM
                     )
                 } else {
-                    scheduleAdminNotifications()
+                    AlarmManagerAdmin.programarAlarmaDiaria(this)
                 }
             } else {
-                WorkManager.getInstance(this).cancelAllWorkByTag("pendientes_diarios")
+                AlarmManagerAdmin.cancelarAlarma(this)
             }
 
             Toast.makeText(this, "Perfil guardado", Toast.LENGTH_SHORT).show()
@@ -128,29 +126,6 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
         btnCambiarPass.setOnClickListener {
             startActivity(Intent(this, CambiarPasswordActivity::class.java))
         }
-    }
-
-    private fun scheduleAdminNotifications() {
-        val now = Calendar.getInstance()
-        val next = now.clone() as Calendar
-        next.set(Calendar.HOUR_OF_DAY, 10)
-        next.set(Calendar.MINUTE, 0)
-        next.set(Calendar.SECOND, 0)
-
-        if (now.after(next)) next.add(Calendar.DAY_OF_YEAR, 1)
-
-        val delay = next.timeInMillis - now.timeInMillis
-
-        val request = PeriodicWorkRequestBuilder<AdminNotifsWorker>(1, TimeUnit.DAYS)
-            .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-            .addTag("pendientes_diarios")
-            .build()
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "pendientes_diarios",
-            ExistingPeriodicWorkPolicy.UPDATE,
-            request
-        )
     }
 
     private fun pickImage() {
@@ -164,18 +139,22 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
         if (requestCode == RC_PICK_PHOTO && resultCode == Activity.RESULT_OK) {
             data?.data?.let { uri ->
                 try {
-                    val inputStream = contentResolver.openInputStream(uri)
-                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                    ivAvatar.setImageBitmap(bitmap)
+                    val inputStream: InputStream? = contentResolver.openInputStream(uri)
+                    val avatarFile = File(filesDir, "avatar_admin.jpg")
+                    val outputStream = FileOutputStream(avatarFile)
+                    inputStream?.copyTo(outputStream)
+                    outputStream.close()
                     inputStream?.close()
+
+                    ivAvatar.setImageBitmap(BitmapFactory.decodeFile(avatarFile.absolutePath))
+
+                    getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                        .edit()
+                        .putString(KEY_AVATAR, avatarFile.absolutePath)
+                        .apply()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-
-                getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-                    .edit()
-                    .putString(KEY_AVATAR, uri.toString())
-                    .apply()
             }
         }
     }
@@ -183,7 +162,7 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RC_NOTIF_PERM && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            scheduleAdminNotifications()
+            AlarmManagerAdmin.programarAlarmaDiaria(this)
         }
     }
 }

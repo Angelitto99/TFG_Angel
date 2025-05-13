@@ -2,7 +2,7 @@ package com.example.servisurtelecomunicaciones
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.Button
@@ -10,9 +10,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
 import de.hdodenhof.circleimageview.CircleImageView
+import com.google.firebase.auth.FirebaseAuth
+import java.io.File
 
 class AdminHomeActivity : AppCompatActivity() {
 
@@ -72,12 +72,14 @@ class AdminHomeActivity : AppCompatActivity() {
         val nombre = prefs.getString(KEY_NAME, "Admin") ?: "Admin"
         tvGreeting.text = "Hola, $nombre"
 
-        val avatarUri = prefs.getString(KEY_AVATAR, null)
-        if (avatarUri != null) {
-            Glide.with(this)
-                .load(Uri.parse(avatarUri))
-                .placeholder(R.drawable.ic_perfil)
-                .into(ivAvatar)
+        val avatarPath = prefs.getString(KEY_AVATAR, null)
+        if (avatarPath != null) {
+            val file = File(avatarPath)
+            if (file.exists()) {
+                ivAvatar.setImageBitmap(BitmapFactory.decodeFile(file.absolutePath))
+            } else {
+                ivAvatar.setImageResource(R.drawable.ic_perfil)
+            }
         } else {
             ivAvatar.setImageResource(R.drawable.ic_perfil)
         }
