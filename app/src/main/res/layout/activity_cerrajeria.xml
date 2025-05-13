@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="En ServisurTelecomunicaciones, nos especializamos en brindar soluciones de cerrajería de alta calidad para reforzar la seguridad y la comodidad de su entorno. Desde la instalación de cierres eléctricos hasta la automatización de puertas con sistemas avanzados, garantizamos un servicio completo y personalizado."
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="#444444"
             android:gravity="center"
             android:layout_marginBottom="16dp" />
@@ -76,7 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="- Cambio de muelle clásico a muelle eléctrico"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="#444444"
                     android:layout_marginBottom="4dp" />
 
@@ -84,7 +84,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="- Instalación de sistemas con mando o llave magnética"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="#444444"
                     android:layout_marginBottom="4dp" />
 
@@ -92,7 +92,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="- Colocación de lectores de acceso inteligentes"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="#444444"
                     android:layout_marginBottom="4dp" />
             </LinearLayout>
@@ -128,6 +128,16 @@
                     android:contentDescription="Imagen de bombillo" />
             </LinearLayout>
         </HorizontalScrollView>
+
+        <!-- Indicador -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Desliza para ver más ➡️"
+            android:textSize="14sp"
+            android:textColor="#777777"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center" />
 
         <!-- Botón Pedir Presupuesto -->
         <Button

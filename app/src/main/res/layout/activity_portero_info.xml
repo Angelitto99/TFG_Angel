@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#FFFFFF"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:fillViewport="true"
+    android:scrollbars="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="top|center_horizontal">
 
         <!-- Título principal -->
         <TextView
@@ -25,32 +27,32 @@
             android:gravity="center"
             android:textAlignment="center" />
 
-        <!-- Subtítulo en rojo (opcional) -->
+        <!-- Subtítulo en rojo -->
         <TextView
             android:id="@+id/tvSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Soluciones Innovadoras en Videoporteros"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#D32F2F"
             android:layout_marginBottom="16dp"
             android:gravity="center"
             android:textAlignment="center" />
 
-        <!-- Texto explicativo (diferencias y datos generales) -->
+        <!-- Texto explicativo -->
         <TextView
             android:id="@+id/tvDifferences"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Texto explicativo de la marca..."
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@android:color/black"
             android:layout_marginBottom="16dp"
             android:gravity="center"
             android:textAlignment="center" />
 
-        <!-- CardView para los Precios de Portero y Videoportero -->
+        <!-- CardView de precios -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardPrices"
             android:layout_width="match_parent"
@@ -61,7 +63,6 @@
             android:backgroundTint="@android:color/white"
             app:cardElevation="4dp">
 
-            <!-- Aquí cambiamos el gravity a start para que quede a la izquierda -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:text="Precio Portero:"
                     android:textStyle="bold"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="4dp"
                     android:gravity="start"
@@ -86,7 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="€XXX"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="12dp"
                     android:gravity="start"
@@ -98,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:text="Precio VideoPortero:"
                     android:textStyle="bold"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="4dp"
                     android:gravity="start"
@@ -109,7 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="€XXX"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="4dp"
                     android:gravity="start"
@@ -148,9 +149,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Para asistencia personalizada, contáctanos vía email: info@servisurtelecomunicaciones.com"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textColor="@android:color/black"
             android:gravity="center"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:layout_marginBottom="32dp" />
+
     </LinearLayout>
 </ScrollView>

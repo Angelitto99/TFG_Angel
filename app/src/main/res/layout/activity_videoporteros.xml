@@ -1,244 +1,233 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#F7F7F7"
-    android:fillViewport="true">
+    android:padding="16dp">
 
-    <LinearLayout
+    <!-- Contenido scrollable -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Título -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Marcas de Videoporteros"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Grid de Marcas -->
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:useDefaultMargins="true"
+                android:alignmentMode="alignMargins"
+                android:layout_marginBottom="8dp">
+
+                <!-- Tegui -->
+                <LinearLayout
+                    android:id="@+id/itemTegui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="6dp">
+
+                    <FrameLayout
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/img_border"
+                        android:gravity="center"
+                        android:padding="4dp">
+
+                        <ImageView
+                            android:id="@+id/ivTegui"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="Tegui"/>
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tegui"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@android:color/black"/>
+                </LinearLayout>
+
+                <!-- Comelit -->
+                <LinearLayout
+                    android:id="@+id/itemComelit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="6dp">
+
+                    <FrameLayout
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/img_border"
+                        android:gravity="center"
+                        android:padding="4dp">
+
+                        <ImageView
+                            android:id="@+id/ivComelit"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="Comelit"/>
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Comelit"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@android:color/black"/>
+                </LinearLayout>
+
+                <!-- Fermax -->
+                <LinearLayout
+                    android:id="@+id/itemFermax"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="6dp">
+
+                    <FrameLayout
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/img_border"
+                        android:gravity="center"
+                        android:padding="4dp">
+
+                        <ImageView
+                            android:id="@+id/ivFermax"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="Fermax"/>
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fermax"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@android:color/black"/>
+                </LinearLayout>
+
+                <!-- Golmar -->
+                <LinearLayout
+                    android:id="@+id/itemGolmar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="6dp">
+
+                    <FrameLayout
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/img_border"
+                        android:gravity="center"
+                        android:padding="4dp">
+
+                        <ImageView
+                            android:id="@+id/ivGolmar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="Golmar"/>
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Golmar"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@android:color/black"/>
+                </LinearLayout>
+
+                <!-- Galak CENTRADO -->
+                <LinearLayout
+                    android:id="@+id/itemGalak"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="6dp"
+                    android:layout_row="2"
+                    android:layout_columnSpan="2"
+                    android:layout_gravity="center">
+
+                    <FrameLayout
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/img_border"
+                        android:gravity="center"
+                        android:padding="4dp">
+
+                        <ImageView
+                            android:id="@+id/ivGalak"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="Galak"/>
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Galak"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@android:color/black"/>
+                </LinearLayout>
+            </GridLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Botón fijo abajo -->
+    <Button
+        android:id="@+id/btnPedirPresupuesto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:padding="24dp">
-
-        <!-- Título -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Marcas de Videoporteros"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="16dp" />
-
-        <!-- GridLayout con 2 columnas y 3 filas -->
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:rowCount="3"
-            android:useDefaultMargins="true"
-            android:alignmentMode="alignMargins"
-            android:layout_marginBottom="24dp">
-
-            <!-- Item 1: Tegui -->
-            <LinearLayout
-                android:id="@+id/itemTegui"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_row="0"
-                android:layout_column="0"
-                android:layout_margin="8dp">
-
-                <FrameLayout
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/img_border"
-                    android:gravity="center"
-                    android:padding="4dp">
-
-                    <ImageView
-                        android:id="@+id/ivTegui"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="Tegui"/>
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tegui"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@android:color/black"/>
-            </LinearLayout>
-
-            <!-- Item 2: Comelit -->
-            <LinearLayout
-                android:id="@+id/itemComelit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_row="0"
-                android:layout_column="1"
-                android:layout_margin="8dp">
-
-                <FrameLayout
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/img_border"
-                    android:gravity="center"
-                    android:padding="4dp">
-
-                    <ImageView
-                        android:id="@+id/ivComelit"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="Comelit"/>
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Comelit"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@android:color/black"/>
-            </LinearLayout>
-
-            <!-- Item 3: Fermax -->
-            <LinearLayout
-                android:id="@+id/itemFermax"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_row="1"
-                android:layout_column="0"
-                android:layout_margin="8dp">
-
-                <FrameLayout
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/img_border"
-                    android:gravity="center"
-                    android:padding="4dp">
-
-                    <ImageView
-                        android:id="@+id/ivFermax"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="Fermax"/>
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fermax"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@android:color/black"/>
-            </LinearLayout>
-
-            <!-- Item 4: Golmar -->
-            <LinearLayout
-                android:id="@+id/itemGolmar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_row="1"
-                android:layout_column="1"
-                android:layout_margin="8dp">
-
-                <FrameLayout
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/img_border"
-                    android:gravity="center"
-                    android:padding="4dp">
-
-                    <ImageView
-                        android:id="@+id/ivGolmar"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="Golmar"/>
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Golmar"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@android:color/black"/>
-            </LinearLayout>
-
-            <!-- Item 5: Galak -->
-            <LinearLayout
-                android:id="@+id/itemGalak"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_row="2"
-                android:layout_columnSpan="2"
-                android:layout_gravity="center"
-                android:layout_margin="8dp">
-
-                <FrameLayout
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/img_border"
-                    android:gravity="center"
-                    android:padding="4dp">
-
-                    <ImageView
-                        android:id="@+id/ivGalak"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="Galak"/>
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Galak"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@android:color/black"/>
-            </LinearLayout>
-        </GridLayout>
-
-        <!-- Botón: Pedir Presupuesto -->
-        <Button
-            android:id="@+id/btnPedirPresupuesto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pedir Presupuesto"
-            android:textColor="@android:color/white"
-            android:background="@color/purple_500"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp"/>
-    </LinearLayout>
-</ScrollView>
+        android:text="Pedir Presupuesto"
+        android:textColor="@android:color/white"
+        android:background="@color/purple_500"
+        android:textSize="18sp"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>

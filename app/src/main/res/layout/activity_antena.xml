@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Antenas"
-            android:textSize="26sp"
+            android:textSize="28sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
             android:layout_marginTop="12dp" />
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Conectividad y Señal de TV"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#FF1100"
             android:layout_marginTop="2dp"

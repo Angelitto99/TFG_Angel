@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Nos encargamos del mantenimiento de comunidades, con más de 200 mantenimientos a nuestro cargo. Realizamos mantenimiento de antenas, porteros, iluminación y cerrajería."
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@android:color/black"
             android:gravity="center"
             android:layout_marginBottom="16dp"/>
@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Según el tipo de contrato, los materiales pueden estar incluidos o solo se cobran los desplazamientos."
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@android:color/black"
             android:gravity="center"
             android:layout_marginBottom="16dp"/>
@@ -88,7 +88,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="- Revisión y mantenimiento programado de porteros y antenas."
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginTop="8dp"/>
 
@@ -97,7 +97,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="- Inspección, reparación y actualización de iluminación y cableados."
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginTop="8dp"/>
 
@@ -143,6 +143,16 @@
                     android:contentDescription="Mantenimiento de antena" />
             </LinearLayout>
         </HorizontalScrollView>
+
+        <!-- Indicador -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Desliza para ver más ➡️"
+            android:textSize="14sp"
+            android:textColor="#777777"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center" />
 
         <!-- Botón: Pedir información -->
         <Button

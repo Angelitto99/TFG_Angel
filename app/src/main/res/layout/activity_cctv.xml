@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Vigilancia y Seguridad Avanzadas"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#D32F2F"
             android:gravity="center"
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="En ServisurTelecomunicaciones, brindamos soluciones de Circuito Cerrado de Televisión (CCTV) adaptadas a las necesidades de su hogar, negocio o comunidad. Nuestro objetivo es ofrecer una vigilancia confiable y continua para su tranquilidad."
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@android:color/black"
             android:gravity="center"
             android:layout_marginBottom="16dp"/>
@@ -71,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:text="¿Dónde instalamos?"
                     android:textStyle="bold"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="8dp"/>
 
@@ -91,7 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Confíe en nuestro equipo para una instalación profesional y efectiva de su sistema CCTV."
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@android:color/black"
             android:gravity="center"
             android:layout_marginBottom="16dp"/>

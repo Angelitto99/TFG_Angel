@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="En ServisurTelecomunicaciones, nos especializamos en brindar soluciones de electricidad para garantizar la seguridad y comodidad de su entorno. Desde la actualización de cuadros eléctricos hasta la instalación de sistemas de iluminación inteligente, nuestro equipo le ofrece un servicio completo y personalizado."
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@android:color/black"
             android:gravity="center"
             android:layout_marginBottom="16dp"/>
@@ -77,7 +77,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="- Actualización de cuadros eléctricos"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="4dp" />
 
@@ -86,7 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="- Instalación de interruptores inteligentes y sistemas de iluminación"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="4dp" />
 
@@ -95,7 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="- Renovación de cableados en casas en construcción"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="4dp" />
             </LinearLayout>
@@ -148,6 +148,16 @@
                     android:contentDescription="Imagen de cuadro eléctrico 3" />
             </LinearLayout>
         </HorizontalScrollView>
+
+        <!-- Indicador -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Desliza para ver más ➡️"
+            android:textSize="14sp"
+            android:textColor="#777777"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center" />
 
         <!-- Botón Pedir Presupuesto -->
         <Button
