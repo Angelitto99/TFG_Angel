@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#f4f4f4"
-    android:padding="16dp"
+    android:padding="12dp"
     android:fillViewport="true">
 
     <LinearLayout
@@ -13,31 +13,30 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <!-- Título principal -->
+        <!-- Título -->
         <TextView
             android:id="@+id/tvTituloAntenas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Antenas"
-            android:textSize="28sp"
+            android:textSize="26sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
-            android:gravity="center"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="12dp" />
 
-        <!-- Subtítulo en rojo -->
+        <!-- Subtítulo -->
         <TextView
             android:id="@+id/tvSubtituloAntenas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Conectividad y Señal de TV"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#FF1100"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="12dp"/>
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="8dp" />
 
-        <!-- Texto general explicativo -->
+        <!-- Descripción general -->
         <TextView
             android:id="@+id/tvDescripcionGeneral"
             android:layout_width="match_parent"
@@ -46,70 +45,25 @@
             android:textSize="16sp"
             android:textColor="#444444"
             android:gravity="center"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="10dp" />
 
-        <!-- Contenedor horizontal para Parabólica y Terrestre -->
+        <!-- Tarjetas -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="none"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="4dp">
 
             <LinearLayout
-                android:id="@+id/llHorizontalCards"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:orientation="horizontal">
 
-                <!-- CardView: Antena Parabólica -->
+                <!-- Terrestre -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="350dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="8dp"
-                    app:cardUseCompatPadding="true"
-                    android:background="#FFFFFF">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <TextView
-                            android:id="@+id/tvTitleParabolic"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Antena Parabólica"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:textColor="#000000"
-                            android:layout_marginBottom="8dp"/>
-
-                        <ImageView
-                            android:id="@+id/imgParabolic"
-                            android:layout_width="match_parent"
-                            android:layout_height="220dp"
-                            android:scaleType="centerCrop"
-                            android:layout_marginBottom="12dp"/>
-
-                        <TextView
-                            android:id="@+id/descriptionParabolic"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Las antenas parabólicas permiten captar señales de televisión desde satélites en órbita..."
-                            android:textSize="18sp"
-                            android:textColor="#444444"/>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- CardView: Antena Terrestre -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="12dp"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="8dp"
                     app:cardUseCompatPadding="true"
@@ -129,29 +83,86 @@
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:textColor="#000000"
-                            android:layout_marginBottom="8dp"/>
+                            android:layout_marginBottom="8dp" />
 
                         <ImageView
                             android:id="@+id/imgTerrestrial"
                             android:layout_width="match_parent"
-                            android:layout_height="220dp"
+                            android:layout_height="180dp"
                             android:scaleType="centerCrop"
-                            android:layout_marginBottom="12dp"/>
+                            android:layout_marginBottom="12dp" />
 
                         <TextView
                             android:id="@+id/descriptionTerrestrial"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Las antenas terrestres reciben señales de TV desde torres locales..."
+                            android:text="Las antenas terrestres reciben señales de TV desde torres de transmisión locales, perfectas para canales nacionales y contenidos regionales."
                             android:textSize="16sp"
-                            android:textColor="#444444"/>
+                            android:textColor="#444444" />
+
+                        <!-- TRUCO: espacio invisible para igualar altura -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="18dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
+                <!-- Parabólica -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="350dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp"
+                    app:cardUseCompatPadding="true"
+                    android:background="#FFFFFF">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tvTitleParabolic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Antena Parabólica"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="#000000"
+                            android:layout_marginBottom="8dp" />
+
+                        <ImageView
+                            android:id="@+id/imgParabolic"
+                            android:layout_width="match_parent"
+                            android:layout_height="180dp"
+                            android:scaleType="centerCrop"
+                            android:layout_marginBottom="12dp" />
+
+                        <TextView
+                            android:id="@+id/descriptionParabolic"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Las antenas parabólicas reciben señales de televisión desde satélites en órbita. Se utilizan principalmente para acceder a canales internacionales y en alta definición."
+                            android:textSize="16sp"
+                            android:textColor="#444444" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
             </LinearLayout>
         </HorizontalScrollView>
 
-        <!-- Botón Pedir Presupuesto -->
+        <!-- Indicador -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Desliza para ver más ➡️"
+            android:textSize="14sp"
+            android:textColor="#777777"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center" />
+
+        <!-- Botón -->
         <Button
             android:id="@+id/btnPedirPresupuesto"
             android:layout_width="match_parent"
@@ -160,6 +171,8 @@
             android:textColor="@android:color/white"
             android:background="@color/purple_500"
             android:textSize="18sp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="2dp" />
+
     </LinearLayout>
 </ScrollView>
