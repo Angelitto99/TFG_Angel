@@ -1,9 +1,12 @@
 package com.example.servisurtelecomunicaciones
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 
@@ -12,27 +15,45 @@ class CerrajeriaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cerrajeria)
 
-        // Cargar imagen de muelle usando Glide
+        val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val isGuest = prefs.getBoolean("is_guest", false)
+
+        // Cargar imagen de muelle
         val ivMuelle = findViewById<ImageView>(R.id.ivMuelle)
         Glide.with(this)
-            .load(R.drawable.ic_muelle) // Reemplaza por tu imagen optimizada
-            .override(1200, 1200)         // Ajusta el tamaño (en píxeles) según necesites
+            .load(R.drawable.ic_muelle)
+            .override(1200, 1200)
             .centerCrop()
             .into(ivMuelle)
 
-        // Cargar imagen de bombillo usando Glide
+        // Cargar imagen de bombillo
         val ivBombillo = findViewById<ImageView>(R.id.ivBombillo)
         Glide.with(this)
-            .load(R.drawable.ic_bombillo) // Reemplaza por tu imagen optimizada
+            .load(R.drawable.ic_bombillo)
             .override(1200, 1200)
             .centerCrop()
             .into(ivBombillo)
 
-        // Botón Pedir Presupuesto: abre el formulario
+        // Botón Pedir Presupuesto
         val btnPedirPresupuesto = findViewById<Button>(R.id.btnPedirPresupuesto)
         btnPedirPresupuesto.setOnClickListener {
-            val intent = Intent(this, FormularioAvisoActivity::class.java)
-            startActivity(intent)
+            if (isGuest) {
+                toastConLogo("Debes registrarte para usar esta función")
+            } else {
+                startActivity(Intent(this, FormularioAvisoActivity::class.java))
+            }
+        }
+    }
+
+    private fun toastConLogo(msg: String) {
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        layout.findViewById<TextView>(R.id.toastText).text = msg
+
+        Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
+            setGravity(android.view.Gravity.CENTER, 0, 250)
+            show()
         }
     }
 }

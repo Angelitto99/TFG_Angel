@@ -1,4 +1,3 @@
-// LoginActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.content.Context
@@ -9,6 +8,7 @@ import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.util.Patterns
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -48,16 +48,11 @@ class LoginActivity : AppCompatActivity() {
         val pinEt = findViewById<EditText>(R.id.pinField)
         val loginBtn = findViewById<Button>(R.id.loginButton)
         val registerBtn = findViewById<Button>(R.id.registerButton)
+        val btnGuest = findViewById<Button>(R.id.btnGuest)
         val logoIv = findViewById<ImageView>(R.id.logo)
-        val ivGoogle = findViewById<CircleImageView>(R.id.ivGoogle)
-        val ivFacebook = findViewById<CircleImageView>(R.id.ivFacebook)
-        val ivTwitter = findViewById<CircleImageView>(R.id.ivTwitter)
         val tvPrivacy = findViewById<TextView>(R.id.tvPrivacy)
 
         Glide.with(this).load(R.drawable.ic_servisur).fitCenter().into(logoIv)
-        Glide.with(this).load(R.drawable.ic_google).override(48, 48).into(ivGoogle)
-        Glide.with(this).load(R.drawable.ic_facebook).override(48, 48).into(ivFacebook)
-        Glide.with(this).load(R.drawable.ic_twitter).override(48, 48).into(ivTwitter)
 
         switchAdmin.setOnCheckedChangeListener { _, isChecked ->
             pinEt.visibility = if (isChecked) View.VISIBLE else View.GONE
@@ -75,31 +70,31 @@ class LoginActivity : AppCompatActivity() {
             val pwd = passEt.text.toString()
 
             if (email.isEmpty() || pwd.isEmpty()) {
-                toastCentered("Completa email y contraseña")
+                toastConLogo("Completa email y contraseña")
                 return@setOnClickListener
             }
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                toastCentered("Email no válido")
+                toastConLogo("Email no válido")
                 return@setOnClickListener
             }
 
             if (switchAdmin.isChecked) {
                 if (email !in ADMIN_EMAILS) {
-                    toastCentered("Este correo no es de administrador")
+                    toastConLogo("Este correo no es de administrador")
                     return@setOnClickListener
                 }
                 val pin = pinEt.text.toString().trim()
                 if (pin.isEmpty()) {
-                    toastCentered("Introduce el PIN de administrador")
+                    toastConLogo("Introduce el PIN de administrador")
                     return@setOnClickListener
                 }
                 if (pin != ADMIN_PIN) {
-                    toastCentered("PIN de administrador incorrecto")
+                    toastConLogo("PIN de administrador incorrecto")
                     return@setOnClickListener
                 }
                 auth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        prefs.edit().putBoolean("is_admin", true).apply()
+                        prefs.edit().putBoolean("is_admin", true).putBoolean("is_guest", false).apply()
                         startActivity(Intent(this, AdminHomeActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         })
@@ -111,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 auth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        prefs.edit().putBoolean("is_admin", false).apply()
+                        prefs.edit().putBoolean("is_admin", false).putBoolean("is_guest", false).apply()
                         startActivity(Intent(this, HomeActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         })
@@ -127,49 +122,50 @@ class LoginActivity : AppCompatActivity() {
             val email = emailEt.text.toString().trim()
             val pwd = passEt.text.toString()
             if (email.isEmpty() || pwd.isEmpty()) {
-                toastCentered("Completa email y contraseña")
+                toastConLogo("Completa email y contraseña")
                 return@setOnClickListener
             }
             auth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener(this) { reg ->
                 if (reg.isSuccessful) {
-                    prefs.edit().putBoolean("is_admin", false).apply()
-                    toastCentered("Registro exitoso")
+                    prefs.edit().putBoolean("is_admin", false).putBoolean("is_guest", false).apply()
+                    toastConLogo("Registro exitoso")
                     startActivity(Intent(this, HomeActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     })
                     finish()
                 } else {
-                    toastCentered("Error al registrar: ${reg.exception?.message}")
+                    toastConLogo("Error al registrar: ${reg.exception?.message}")
                 }
             }
         }
 
-        val socialClick = View.OnClickListener {
-            toastCentered("Acceso como cliente")
-            prefs.edit().putBoolean("is_admin", false).apply()
+        btnGuest.setOnClickListener {
+            toastConLogo("Acceso como invitado")
+            prefs.edit().putBoolean("is_admin", false).putBoolean("is_guest", true).apply()
             startActivity(Intent(this, HomeActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
             finish()
         }
-
-        ivGoogle.setOnClickListener(socialClick)
-        ivFacebook.setOnClickListener(socialClick)
-        ivTwitter.setOnClickListener(socialClick)
-    }
-
-    private fun toastCentered(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).apply {
-            setGravity(Gravity.CENTER, 0, 250)
-            show()
-        }
     }
 
     private fun handleAuthError(ex: Exception?) {
         when (ex) {
-            is FirebaseAuthInvalidUserException -> toastCentered("No existe ninguna cuenta con ese correo")
-            is FirebaseAuthInvalidCredentialsException -> toastCentered("La contraseña es incorrecta")
-            else -> toastCentered("Error de autenticación: ${ex?.localizedMessage}")
+            is FirebaseAuthInvalidUserException -> toastConLogo("No existe ninguna cuenta con ese correo")
+            is FirebaseAuthInvalidCredentialsException -> toastConLogo("La contraseña es incorrecta")
+            else -> toastConLogo("Error de autenticación: ${ex?.localizedMessage}")
+        }
+    }
+
+    private fun toastConLogo(msg: String) {
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        layout.findViewById<TextView>(R.id.toastText).text = msg
+
+        Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
+            setGravity(Gravity.CENTER, 0, 250)
+            show()
         }
     }
 }

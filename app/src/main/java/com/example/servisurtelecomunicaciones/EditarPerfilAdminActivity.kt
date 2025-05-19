@@ -1,4 +1,3 @@
-// EditarPerfilAdminActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.Manifest
@@ -6,23 +5,25 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
+import android.view.Gravity
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.exifinterface.media.ExifInterface
 import com.google.android.material.textfield.TextInputEditText
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 
 class EditarPerfilAdminActivity : AppCompatActivity() {
 
@@ -72,7 +73,7 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
             if (file.exists()) {
                 ivAvatar.setImageBitmap(BitmapFactory.decodeFile(file.absolutePath))
             } else {
-                Log.d("EditarPerfilAdmin", "Avatar file not found at $path")
+                ivAvatar.setImageResource(R.drawable.ic_perfil)
             }
         }
 
@@ -119,7 +120,7 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
                 AlarmManagerAdmin.cancelarAlarma(this)
             }
 
-            Toast.makeText(this, "Perfil guardado", Toast.LENGTH_SHORT).show()
+            toastConLogo("Perfil guardado correctamente")
             finish()
         }
 
@@ -139,14 +140,14 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
         if (requestCode == RC_PICK_PHOTO && resultCode == Activity.RESULT_OK) {
             data?.data?.let { uri ->
                 try {
-                    val inputStream: InputStream? = contentResolver.openInputStream(uri)
+                    val correctedBitmap = rotateImageIfRequired(this, uri)
+
                     val avatarFile = File(filesDir, "avatar_admin.jpg")
                     val outputStream = FileOutputStream(avatarFile)
-                    inputStream?.copyTo(outputStream)
+                    correctedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                     outputStream.close()
-                    inputStream?.close()
 
-                    ivAvatar.setImageBitmap(BitmapFactory.decodeFile(avatarFile.absolutePath))
+                    ivAvatar.setImageBitmap(correctedBitmap)
 
                     getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                         .edit()
@@ -163,6 +164,38 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RC_NOTIF_PERM && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             AlarmManagerAdmin.programarAlarmaDiaria(this)
+        }
+    }
+
+    private fun rotateImageIfRequired(context: Context, imageUri: Uri): Bitmap {
+        val inputStream = context.contentResolver.openInputStream(imageUri)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+
+        val exifStream = context.contentResolver.openInputStream(imageUri)
+        val exif = ExifInterface(exifStream!!)
+        val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+        exifStream.close()
+
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+        }
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    private fun toastConLogo(msg: String) {
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        layout.findViewById<TextView>(R.id.toastText).text = msg
+
+        Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
+            setGravity(Gravity.CENTER, 0, 250)
+            show()
         }
     }
 }

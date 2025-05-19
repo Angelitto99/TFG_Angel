@@ -13,7 +13,6 @@
         android:layout_marginTop="48dp"
         android:gravity="center_horizontal">
 
-        <!-- Logo -->
         <ImageView
             android:id="@+id/logo"
             android:layout_width="match_parent"
@@ -22,7 +21,6 @@
             android:layout_marginBottom="16dp"
             android:contentDescription="Logo Servisur" />
 
-        <!-- Email -->
         <EditText
             android:id="@+id/mail"
             android:layout_width="match_parent"
@@ -33,7 +31,6 @@
             android:padding="10dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Contraseña -->
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
@@ -44,7 +41,6 @@
             android:padding="10dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Switch centrado -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,7 +54,6 @@
                 android:text="Entrar como administrador" />
         </LinearLayout>
 
-        <!-- PIN -->
         <EditText
             android:id="@+id/pinField"
             android:layout_width="match_parent"
@@ -70,7 +65,6 @@
             android:visibility="gone"
             android:layout_marginBottom="12dp" />
 
-        <!-- Botones -->
         <Button
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
@@ -91,25 +85,28 @@
             android:background="@drawable/rounded_button_gray"
             android:textColor="@android:color/white"
             android:padding="12dp"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="8dp" />
 
-        <!-- Separador -->
+        <!-- ✅ LÍNEA SEPARADORA -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginBottom="12dp">
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"
                 android:background="@android:color/darker_gray" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="  o  "
                 android:textColor="@android:color/darker_gray" />
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
@@ -117,42 +114,29 @@
                 android:background="@android:color/darker_gray" />
         </LinearLayout>
 
-        <!-- Texto centrado -->
+        <!-- TEXTO -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Puede también registrarse con:"
+            android:text="También puedes acceder con:"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textSize="12sp"
             android:layout_marginBottom="8dp"
             android:layout_gravity="center_horizontal" />
 
-        <!-- Redes sociales -->
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <!-- BOTÓN INVITADO -->
+        <Button
+            android:id="@+id/btnGuest"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp">
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivGoogle"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_margin="6dp" />
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivFacebook"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_margin="6dp" />
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivTwitter"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_margin="6dp" />
-        </LinearLayout>
+            android:text="ENTRAR COMO INVITADO"
+            android:textAllCaps="false"
+            android:background="@drawable/rounded_button_purple"
+            android:textColor="@android:color/white"
+            android:padding="12dp"
+            android:layout_marginBottom="24dp" />
 
-        <!-- Política centrada -->
+        <!-- POLÍTICAS -->
         <TextView
             android:id="@+id/tvPrivacy"
             android:layout_width="wrap_content"
