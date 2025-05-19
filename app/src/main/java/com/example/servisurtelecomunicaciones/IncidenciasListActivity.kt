@@ -1,6 +1,7 @@
 package com.example.servisurtelecomunicaciones
 
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,7 +12,6 @@ import com.google.firebase.database.*
 class IncidenciasListActivity : AppCompatActivity() {
 
     companion object {
-        // Correos de administrador autorizados
         private val ADMIN_EMAILS = listOf(
             "admin@servisur.com"
         )
@@ -25,12 +25,10 @@ class IncidenciasListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_incidencias_list)
 
-        // Inicializamos la referencia a la rama "incidencias"
         dbRef = FirebaseDatabase
             .getInstance("https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com")
             .getReference("incidencias")
 
-        // Configuramos RecyclerView
         val rv = findViewById<RecyclerView>(R.id.rvIncidencias)
         rv.layoutManager = LinearLayoutManager(this)
         adapter = IncidenciaAdapter(
@@ -44,25 +42,15 @@ class IncidenciasListActivity : AppCompatActivity() {
                 dbRef.child(inc.id)
                     .removeValue { err, _ ->
                         if (err == null) {
-                            Toast.makeText(
-                                this,
-                                "Incidencia borrada correctamente",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            toastConLogo("Incidencia borrada correctamente")
                         } else {
-                            Toast.makeText(
-                                this,
-                                "Error al borrar: ${err.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            toastConLogo("Error al borrar: ${err.message}")
                         }
                     }
             }
         )
         rv.adapter = adapter
 
-        // Cargamos únicamente las incidencias creadas por administradores,
-        // y solo si el usuario autenticado también es admin.
         cargarIncidencias()
     }
 
@@ -72,9 +60,7 @@ class IncidenciasListActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val nuevas = snapshot.children
                     .mapNotNull { it.getValue(Incidencia::class.java) }
-                    // Muestro solo si yo soy admin…
                     .filter { me != null && ADMIN_EMAILS.contains(me) }
-                    // …y la incidencia la creó un admin
                     .filter { ADMIN_EMAILS.contains(it.usuarioEmail) }
                     .sortedByDescending { it.timestamp }
 
@@ -82,13 +68,22 @@ class IncidenciasListActivity : AppCompatActivity() {
                 lista.addAll(nuevas)
                 adapter.updateList(nuevas)
             }
+
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(
-                    this@IncidenciasListActivity,
-                    "Error al leer incidencias: ${error.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                toastConLogo("Error al leer incidencias: ${error.message}")
             }
         })
+    }
+
+    private fun toastConLogo(msg: String) {
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        layout.findViewById<TextView>(R.id.toastText).text = msg
+
+        Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
+            setGravity(android.view.Gravity.CENTER, 0, 250)
+            show()
+        }
     }
 }

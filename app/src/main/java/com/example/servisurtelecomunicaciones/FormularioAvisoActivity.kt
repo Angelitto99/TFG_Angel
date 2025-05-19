@@ -71,7 +71,7 @@ class FormularioAvisoActivity : AppCompatActivity() {
             val descripcion = descripcionEditText.text.toString().trim()
 
             if (nombre.isEmpty() || telefono.isEmpty() || direccion.isEmpty() || descripcion.isEmpty()) {
-                showCenteredToast("Por favor, rellene todos los campos")
+                toastConLogo("Por favor, rellene todos los campos")
             } else {
                 val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email ?: "Desconocido"
                 val mensaje = """
@@ -92,13 +92,13 @@ class FormularioAvisoActivity : AppCompatActivity() {
                             mailSender.sendMail("Nueva Incidencia", mensaje, EMAIL_DESTINO)
                         }
                         runOnUiThread {
-                            showCenteredToast("Incidencia enviada correctamente")
+                            toastConLogo("Incidencia enviada correctamente")
                             finish()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
                         runOnUiThread {
-                            showCenteredToast("Error al enviar la incidencia: ${e.localizedMessage}")
+                            toastConLogo("Error al enviar la incidencia: ${e.localizedMessage}")
                         }
                     }
                 }.start()
@@ -120,7 +120,7 @@ class FormularioAvisoActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 captureFromCamera()
             } else {
-                showCenteredToast("Permiso de cámara denegado")
+                toastConLogo("Permiso de cámara denegado")
             }
         }
     }
@@ -196,9 +196,14 @@ class FormularioAvisoActivity : AppCompatActivity() {
         })
     }
 
-    private fun showCenteredToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).apply {
-            setGravity(Gravity.CENTER, 0, 500)
+    private fun toastConLogo(msg: String) {
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        layout.findViewById<TextView>(R.id.toastText).text = msg
+
+        Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
+            setGravity(Gravity.CENTER, 0, 250)
             show()
         }
     }

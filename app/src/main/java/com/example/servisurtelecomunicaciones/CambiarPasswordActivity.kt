@@ -1,9 +1,9 @@
 package com.example.servisurtelecomunicaciones
 
 import android.os.Bundle
-import android.view.Gravity
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -29,29 +29,34 @@ class CambiarPasswordActivity : AppCompatActivity() {
             val repetir = etRepetirPass.text.toString()
 
             if (nueva.length < 6) {
-                toast("La contraseña debe tener al menos 6 caracteres")
+                toastConLogo("La contraseña debe tener al menos 6 caracteres")
                 return@setOnClickListener
             }
             if (nueva != repetir) {
-                toast("Las contraseñas no coinciden")
+                toastConLogo("Las contraseñas no coinciden")
                 return@setOnClickListener
             }
 
             val user = auth.currentUser
             user?.updatePassword(nueva)?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    toast("Contraseña cambiada correctamente")
+                    toastConLogo("Contraseña cambiada correctamente")
                     finish()
                 } else {
-                    toast("Error al cambiar la contraseña")
+                    toastConLogo("Error al cambiar la contraseña")
                 }
             }
         }
     }
 
-    private fun toast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).apply {
-            setGravity(Gravity.CENTER, 0, 300)
+    private fun toastConLogo(msg: String) {
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        layout.findViewById<TextView>(R.id.toastText).text = msg
+
+        Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
+            setGravity(android.view.Gravity.CENTER, 0, 250)
             show()
         }
     }

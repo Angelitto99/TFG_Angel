@@ -37,13 +37,10 @@ class IncidenciaAdapter(
         val inc = items[position]
         val ctx = holder.itemView.context
 
-        // Formatear fecha
-        val fechaStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            .format(inc.timestamp)
+        val fechaStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(inc.timestamp)
 
-        // Mostrar tarjeta
         holder.tvTitulo.text = inc.nombre
-        holder.tvFecha .text = fechaStr
+        holder.tvFecha.text = fechaStr
         holder.tvEstado.text = inc.estado.replaceFirstChar { it.uppercase() }
         holder.tvEstado.setTextColor(
             ctx.getColor(
@@ -56,12 +53,10 @@ class IncidenciaAdapter(
             )
         )
 
-        // Click para detalle
         holder.itemView.setOnClickListener {
             showDetailDialog(ctx, inc, fechaStr)
         }
 
-        // Papelera
         holder.ivDelete.setOnClickListener {
             confirmarBorrado(ctx, inc, position)
         }
@@ -71,26 +66,11 @@ class IncidenciaAdapter(
         val dialogView = LayoutInflater.from(ctx)
             .inflate(R.layout.dialog_incidencia_detail, null)
 
-        dialogView.findViewById<TextView>(R.id.tvDialogUsuarioVal).apply {
-            text = inc.usuarioEmail
-            setTextColor(ctx.getColor(android.R.color.black))
-        }
-        dialogView.findViewById<TextView>(R.id.tvDialogFechaVal).apply {
-            text = fechaStr
-            setTextColor(ctx.getColor(android.R.color.black))
-        }
-        dialogView.findViewById<TextView>(R.id.tvDialogTelefonoVal).apply {
-            text = inc.telefono
-            setTextColor(ctx.getColor(android.R.color.black))
-        }
-        dialogView.findViewById<TextView>(R.id.tvDialogUbicacionVal).apply {
-            text = inc.ubicacion
-            setTextColor(ctx.getColor(android.R.color.black))
-        }
-        dialogView.findViewById<TextView>(R.id.tvDialogDescripcionVal).apply {
-            text = inc.descripcion
-            setTextColor(ctx.getColor(android.R.color.black))
-        }
+        dialogView.findViewById<TextView>(R.id.tvDialogUsuarioVal).text = inc.usuarioEmail
+        dialogView.findViewById<TextView>(R.id.tvDialogFechaVal).text = fechaStr
+        dialogView.findViewById<TextView>(R.id.tvDialogTelefonoVal).text = inc.telefono
+        dialogView.findViewById<TextView>(R.id.tvDialogUbicacionVal).text = inc.ubicacion
+        dialogView.findViewById<TextView>(R.id.tvDialogDescripcionVal).text = inc.descripcion
 
         AlertDialog.Builder(ctx)
             .setView(dialogView)
@@ -103,17 +83,18 @@ class IncidenciaAdapter(
     }
 
     private fun mostrarCambioEstado(ctx: Context, inc: Incidencia, pos: Int) {
-        val opciones = arrayOf("Abierta","Pendiente","Cerrada")
-        val current  = opciones.indexOfFirst { it.equals(inc.estado,ignoreCase=true) }
+        val opciones = arrayOf("Abierta", "Pendiente", "Cerrada")
+        val current = opciones.indexOfFirst { it.equals(inc.estado, ignoreCase = true) }
+
         AlertDialog.Builder(ctx)
             .setTitle("Cambiar estado")
-            .setSingleChoiceItems(opciones, if(current>=0)current else 0) { dlg,which->
+            .setSingleChoiceItems(opciones, if (current >= 0) current else 0) { dlg, which ->
                 inc.estado = opciones[which].lowercase()
                 onEstadoChanged(inc)
                 notifyItemChanged(pos)
                 dlg.dismiss()
             }
-            .setNegativeButton("Cancelar",null)
+            .setNegativeButton("Cancelar", null)
             .show()
     }
 
@@ -122,21 +103,22 @@ class IncidenciaAdapter(
             onDelete(inc)
             items.removeAt(pos)
             notifyItemRemoved(pos)
-            Toast.makeText(ctx,"Incidencia borrada",Toast.LENGTH_SHORT).show()
+            ctx.toastConLogo("Incidencia borrada")
         }
-        if(inc.estado.lowercase() in listOf("abierta","pendiente")) {
+
+        if (inc.estado.lowercase() in listOf("abierta", "pendiente")) {
             AlertDialog.Builder(ctx)
                 .setTitle("Atención")
                 .setMessage("La incidencia está ${inc.estado}. ¿Borrar de todos modos?")
-                .setPositiveButton("Sí"){d,_-> d.dismiss(); doDelete()}
-                .setNegativeButton("No",null)
+                .setPositiveButton("Sí") { d, _ -> d.dismiss(); doDelete() }
+                .setNegativeButton("No", null)
                 .show()
         } else {
             AlertDialog.Builder(ctx)
                 .setTitle("Borrar incidencia")
                 .setMessage("¿Confirmas borrado?")
-                .setPositiveButton("Sí"){d,_-> d.dismiss(); doDelete()}
-                .setNegativeButton("No",null)
+                .setPositiveButton("Sí") { d, _ -> d.dismiss(); doDelete() }
+                .setNegativeButton("No", null)
                 .show()
         }
     }
@@ -145,5 +127,18 @@ class IncidenciaAdapter(
         items.clear()
         items.addAll(nueva)
         notifyDataSetChanged()
+    }
+}
+
+// ✅ Extensión para usar toastConLogo desde Context (útil en adapters)
+fun Context.toastConLogo(msg: String) {
+    val layout = LayoutInflater.from(this).inflate(R.layout.toast_custom_logo, null)
+    layout.findViewById<TextView>(R.id.toastText).text = msg
+
+    Toast(this).apply {
+        duration = Toast.LENGTH_SHORT
+        view = layout
+        setGravity(android.view.Gravity.CENTER, 0, 250)
+        show()
     }
 }

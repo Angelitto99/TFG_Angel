@@ -28,7 +28,6 @@ class IncidenciaDetailActivity : AppCompatActivity() {
 
         incidencia = intent.getParcelableExtra("incidencia")!!
 
-        // refs
         tvTitulo        = findViewById(R.id.tvDetailTitulo)
         tvFecha         = findViewById(R.id.tvDetailFecha)
         tvUsuario       = findViewById(R.id.tvDetailUsuario)
@@ -38,7 +37,6 @@ class IncidenciaDetailActivity : AppCompatActivity() {
         tvEstado        = findViewById(R.id.tvDetailEstado)
         btnCambiarEstado= findViewById(R.id.btnCambiarEstado)
 
-        // poblar datos
         tvTitulo.text      = incidencia.nombre
         tvFecha.text       = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             .format(Date(incidencia.timestamp))
@@ -48,7 +46,6 @@ class IncidenciaDetailActivity : AppCompatActivity() {
         tvDescripcion.text = incidencia.descripcion
         tvEstado.text      = incidencia.estado.replaceFirstChar { it.uppercase() }
 
-        // cambiar estado en Firebase
         btnCambiarEstado.setOnClickListener {
             val opciones = arrayOf("Abierta", "Pendiente", "Cerrada")
             val current  = opciones.indexOfFirst { it.equals(incidencia.estado, true) }
@@ -56,7 +53,6 @@ class IncidenciaDetailActivity : AppCompatActivity() {
                 .setTitle("Cambiar estado")
                 .setSingleChoiceItems(opciones, if (current>=0) current else 0) { dlg, which ->
                     incidencia.estado = opciones[which].lowercase()
-                    // actualizar en RTDB
                     FirebaseDatabase
                         .getInstance()
                         .getReference("incidencias")
@@ -64,11 +60,23 @@ class IncidenciaDetailActivity : AppCompatActivity() {
                         .child("estado")
                         .setValue(incidencia.estado)
                     tvEstado.text = opciones[which]
-                    Toast.makeText(this, "Estado actualizado", Toast.LENGTH_SHORT).show()
+                    toastConLogo("Estado actualizado")
                     dlg.dismiss()
                 }
                 .setNegativeButton("Cancelar", null)
                 .show()
+        }
+    }
+
+    private fun toastConLogo(msg: String) {
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        layout.findViewById<TextView>(R.id.toastText).text = msg
+
+        Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
+            setGravity(android.view.Gravity.CENTER, 0, 250)
+            show()
         }
     }
 }

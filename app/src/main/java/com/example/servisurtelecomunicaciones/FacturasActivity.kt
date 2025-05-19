@@ -1,4 +1,3 @@
-// FacturasActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.os.Bundle
@@ -39,11 +38,9 @@ class FacturasActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_facturas)
 
-        // RTDB referencia
         val base = "https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com"
         dbRef = FirebaseDatabase.getInstance(base).getReference("facturas")
 
-        // RecyclerView
         val rv = findViewById<RecyclerView>(R.id.rvFacturas)
         rv.layoutManager = LinearLayoutManager(this)
         adapter = FacturaAdapter(
@@ -54,7 +51,6 @@ class FacturasActivity : AppCompatActivity() {
         )
         rv.adapter = adapter
 
-        // Carga las facturas
         dbRef.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
                 val nuevas = snap.children
@@ -64,25 +60,22 @@ class FacturasActivity : AppCompatActivity() {
                 lista.addAll(nuevas)
                 adapter.notifyDataSetChanged()
             }
+
             override fun onCancelled(err: DatabaseError) {
-                Toast.makeText(this@FacturasActivity,
-                    "Error: ${err.message}", Toast.LENGTH_SHORT).show()
+                toastConLogo("Error: ${err.message}")
             }
         })
 
-        // Botón “+”: número = hijos+1 formateado
-        findViewById<FloatingActionButton>(R.id.fabAddFactura)
-            .setOnClickListener {
-                dbRef.get().addOnSuccessListener { snap ->
-                    val next = (snap.childrenCount + 1).toString().padStart(5, '0')
-                    showFormDialog(orig = null, isEdit = false, numeroAuto = next)
-                }
+        findViewById<FloatingActionButton>(R.id.fabAddFactura).setOnClickListener {
+            dbRef.get().addOnSuccessListener { snap ->
+                val next = (snap.childrenCount + 1).toString().padStart(5, '0')
+                showFormDialog(orig = null, isEdit = false, numeroAuto = next)
             }
+        }
     }
 
     private fun showFormDialog(orig: Factura?, isEdit: Boolean, numeroAuto: String) {
-        val v = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_factura_form, null)
+        val v = LayoutInflater.from(this).inflate(R.layout.dialog_factura_form, null)
 
         val tvHeader  = v.findViewById<TextView>(R.id.tvFormHeader)
         val etNumero  = v.findViewById<TextInputEditText>(R.id.etNumero)
@@ -116,17 +109,19 @@ class FacturasActivity : AppCompatActivity() {
 
         etIvaCu.isEnabled = false
         etTotal.isEnabled = false
+
         val watcher = object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val base   = etBase.text.toString().toDoubleOrNull() ?: 0.0
+                val base = etBase.text.toString().toDoubleOrNull() ?: 0.0
                 val ivaPct = etIvaPct.text.toString().toDoubleOrNull() ?: 0.0
-                val ivaCu  = base * ivaPct / 100
+                val ivaCu = base * ivaPct / 100
                 etIvaCu.setText(String.format(Locale.getDefault(), "%.2f", ivaCu))
                 etTotal.setText(String.format(Locale.getDefault(), "%.2f", base + ivaCu))
             }
             override fun beforeTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) {}
             override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) {}
         }
+
         etBase.addTextChangedListener(watcher)
         etIvaPct.addTextChangedListener(watcher)
         if (isEdit) watcher.afterTextChanged(null)
@@ -134,23 +129,21 @@ class FacturasActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setView(v)
             .setPositiveButton(if (isEdit) "Guardar" else "Crear") { dlg,_ ->
-                val num  = etNumero.text.toString().trim()
-                val cli  = etCliente.text.toString().trim()
-                val nif  = etNIF.text.toString().trim()
-                val dir  = etDir.text.toString().trim()
+                val num = etNumero.text.toString().trim()
+                val cli = etCliente.text.toString().trim()
+                val nif = etNIF.text.toString().trim()
+                val dir = etDir.text.toString().trim()
                 val base = etBase.text.toString().toDoubleOrNull() ?: 0.0
-                val ivaPct= etIvaPct.text.toString().toDoubleOrNull() ?: 0.0
+                val ivaPct = etIvaPct.text.toString().toDoubleOrNull() ?: 0.0
                 val ivaCu = etIvaCu.text.toString().toDoubleOrNull() ?: 0.0
-                val tot  = etTotal.text.toString().toDoubleOrNull() ?: 0.0
+                val tot = etTotal.text.toString().toDoubleOrNull() ?: 0.0
                 val pago = etPago.text.toString().trim()
-                val obs  = etObs.text.toString().trim()
+                val obs = etObs.text.toString().trim()
 
                 if (num.isEmpty() || cli.isEmpty()) {
-                    Toast.makeText(this,
-                        "Número y cliente obligatorios", Toast.LENGTH_SHORT).show()
+                    toastConLogo("Número y cliente obligatorios")
                 } else {
                     if (!isEdit) {
-                        // Crear nodo
                         val ref = dbRef.push()
                         val f = Factura(
                             id               = ref.key ?: "",
@@ -168,7 +161,7 @@ class FacturasActivity : AppCompatActivity() {
                             estado           = "pendiente"
                         )
                         ref.setValue(f)
-                        // Envío de email
+
                         Thread {
                             try {
                                 val props = Properties().apply {
@@ -183,15 +176,12 @@ class FacturasActivity : AppCompatActivity() {
                                 })
                                 val msg = MimeMessage(session).apply {
                                     setFrom(InternetAddress(EMAIL_ORIGEN))
-                                    setRecipients(
-                                        Message.RecipientType.TO,
-                                        InternetAddress.parse(EMAIL_DESTINO)
-                                    )
+                                    setRecipients(Message.RecipientType.TO, InternetAddress.parse(EMAIL_DESTINO))
                                     subject = "Nueva factura #$num"
                                     setText("Factura #$num por ${"%.2f".format(tot)} € creada para $cli.")
                                 }
                                 Transport.send(msg)
-                            } catch(e: Exception) {
+                            } catch (e: Exception) {
                                 e.printStackTrace()
                             }
                         }.start()
@@ -215,5 +205,17 @@ class FacturasActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancelar", null)
             .show()
+    }
+
+    private fun toastConLogo(msg: String) {
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        layout.findViewById<TextView>(R.id.toastText).text = msg
+
+        Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
+            setGravity(android.view.Gravity.CENTER, 0, 250)
+            show()
+        }
     }
 }
