@@ -10,16 +10,32 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Cabecera -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Información de Presupuesto"
+            android:text="Detalles del Presupuesto"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
             android:gravity="center"
             android:layout_marginBottom="16dp"/>
 
+        <!-- Tipo de presupuesto -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo de Presupuesto:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tvDetTipo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Número -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,6 +49,7 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="12dp"/>
 
+        <!-- Cliente -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -46,6 +63,7 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="12dp"/>
 
+        <!-- NIF -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,6 +77,7 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="12dp"/>
 
+        <!-- Dirección -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,6 +91,7 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="12dp"/>
 
+        <!-- Fecha -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,19 +105,7 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="12dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Servicio:"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"/>
-        <TextView
-            android:id="@+id/tvDetTipo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="12dp"/>
-
+        <!-- Forma de pago -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -111,6 +119,7 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="12dp"/>
 
+        <!-- Observaciones -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -124,6 +133,7 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="12dp"/>
 
+        <!-- Estado -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -136,6 +146,5 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
             android:layout_marginBottom="16dp"/>
-
     </LinearLayout>
 </ScrollView>

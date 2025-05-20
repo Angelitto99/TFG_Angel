@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.*
@@ -131,6 +130,7 @@ class FacturaAdapter(
                 f.estado = opts[which].lowercase()
                 onEstadoChanged(f)
                 notifyItemChanged(pos)
+                ctx.toastConLogo("Estado cambiado correctamente")
                 d.dismiss()
             }
             .setNegativeButton("Cancelar", null)

@@ -21,8 +21,10 @@ class PresupuestoAdapter(
     private val dateFmt = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
+        val tvTipo: TextView = view.findViewById(R.id.tvPresupuestoTipo)
         val tvNum: TextView = view.findViewById(R.id.tvPresupuestoNumero)
         val tvCli: TextView = view.findViewById(R.id.tvPresupuestoCliente)
+        val tvCom: TextView = view.findViewById(R.id.tvPresupuestoComunidad)
         val tvFec: TextView = view.findViewById(R.id.tvPresupuestoFecha)
         val tvEst: TextView = view.findViewById(R.id.tvPresupuestoEstado)
         val ivDel: ImageView = view.findViewById(R.id.ivPresupuestoDelete)
@@ -40,16 +42,19 @@ class PresupuestoAdapter(
         val p = items[position]
         val ctx = holder.itemView.context
 
+        holder.tvTipo.text = p.tipoPresupuesto
         holder.tvNum.text = "Presupuesto #${p.numero}"
         holder.tvCli.text = p.clienteNombre
+        holder.tvCom.text = p.clienteDireccion
         holder.tvFec.text = dateFmt.format(Date(p.fecha))
 
         val colorInline = when (p.estado.lowercase()) {
-            "aceptado"  -> android.R.color.holo_green_dark
+            "aceptado" -> android.R.color.holo_green_dark
             "pendiente" -> android.R.color.holo_orange_dark
-            "denegado"  -> android.R.color.holo_red_dark
-            else        -> android.R.color.black
+            "denegado" -> android.R.color.holo_red_dark
+            else -> android.R.color.black
         }
+
         holder.tvEst.setTextColor(ctx.getColor(colorInline))
         holder.tvEst.text = p.estado.replaceFirstChar { it.uppercase() }
 
@@ -67,6 +72,7 @@ class PresupuestoAdapter(
                     p.estado = opts[which].lowercase()
                     onEstadoChanged(p)
                     notifyItemChanged(position)
+                    ctx.toastConLogo("Estado cambiado correctamente")
                     dlg.dismiss()
                 }
                 .setNegativeButton("Cancelar", null)
@@ -91,20 +97,20 @@ class PresupuestoAdapter(
     private fun showDetailDialog(ctx: Context, p: Presupuesto, pos: Int) {
         val v = LayoutInflater.from(ctx).inflate(R.layout.dialog_presupuesto_detail, null)
 
+        v.findViewById<TextView>(R.id.tvDetTipo).text = p.tipoPresupuesto
         v.findViewById<TextView>(R.id.tvDetNumero).text = p.numero
         v.findViewById<TextView>(R.id.tvDetCliente).text = p.clienteNombre
         v.findViewById<TextView>(R.id.tvDetNIF).text = p.clienteNIF
         v.findViewById<TextView>(R.id.tvDetDireccion).text = p.clienteDireccion
         v.findViewById<TextView>(R.id.tvDetFecha).text = dateFmt.format(Date(p.fecha))
-        v.findViewById<TextView>(R.id.tvDetTipo).text = p.tipoPresupuesto
         v.findViewById<TextView>(R.id.tvDetPago).text = p.formaPago
         v.findViewById<TextView>(R.id.tvDetObs).text = p.observaciones
 
         val colorRes = when (p.estado.lowercase()) {
-            "aceptado"  -> android.R.color.holo_green_dark
+            "aceptado" -> android.R.color.holo_green_dark
             "pendiente" -> android.R.color.holo_orange_dark
-            "denegado"  -> android.R.color.holo_red_dark
-            else        -> android.R.color.black
+            "denegado" -> android.R.color.holo_red_dark
+            else -> android.R.color.black
         }
 
         val tvE = v.findViewById<TextView>(R.id.tvDetEstado)
@@ -124,6 +130,7 @@ class PresupuestoAdapter(
                         p.estado = opts[which].lowercase()
                         onEstadoChanged(p)
                         notifyItemChanged(pos)
+                        ctx.toastConLogo("Estado cambiado correctamente")
                         d.dismiss()
                     }
                     .setNegativeButton("Cancelar", null)

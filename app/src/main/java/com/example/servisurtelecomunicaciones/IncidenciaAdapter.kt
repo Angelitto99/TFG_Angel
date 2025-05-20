@@ -19,14 +19,15 @@ class IncidenciaAdapter(
 ) : RecyclerView.Adapter<IncidenciaAdapter.VH>() {
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
-        val tvTitulo  = view.findViewById<TextView>(R.id.tvIncidenciaTitulo)
-        val tvFecha   = view.findViewById<TextView>(R.id.tvIncidenciaFecha)
-        val tvEstado  = view.findViewById<TextView>(R.id.tvIncidenciaEstado)
-        val ivDelete  = view.findViewById<ImageView>(R.id.ivDelete)
+        val tvTitulo = view.findViewById<TextView>(R.id.tvIncidenciaTitulo)
+        val tvFecha = view.findViewById<TextView>(R.id.tvIncidenciaFecha)
+        val tvEstado = view.findViewById<TextView>(R.id.tvIncidenciaEstado)
+        val ivDelete = view.findViewById<ImageView>(R.id.ivDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_incidencia, parent, false)
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_incidencia, parent, false)
         return VH(v)
     }
 
@@ -90,13 +91,15 @@ class IncidenciaAdapter(
                 inc.estado = opciones[which].lowercase()
                 onEstadoChanged(inc)
                 notifyItemChanged(pos)
+                ctx.toastConLogo("Estado cambiado correctamente")
                 dlg.dismiss()
             }
             .setNegativeButton("Cancelar", null)
             .create()
 
         dialog.show()
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(ctx.getColor(android.R.color.holo_blue_dark))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            ?.setTextColor(ctx.getColor(android.R.color.holo_blue_dark))
     }
 
     private fun confirmarBorrado(ctx: Context, inc: Incidencia, pos: Int) {

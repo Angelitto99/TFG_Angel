@@ -1,4 +1,3 @@
-// PresupuestosActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.os.Bundle
@@ -25,9 +24,9 @@ import javax.mail.internet.MimeMessage
 class PresupuestosActivity : AppCompatActivity() {
 
     companion object {
-        private const val EMAIL_ORIGEN   = "servisuravisosapp76@gmail.com"
+        private const val EMAIL_ORIGEN = "servisuravisosapp76@gmail.com"
         private const val PASSWORD_EMAIL = "bnlwvwgrxbpfnqma"
-        private const val EMAIL_DESTINO  = "telecomunicacionesservisur8@gmail.com"
+        private const val EMAIL_DESTINO = "telecomunicacionesservisur8@gmail.com"
     }
 
     private lateinit var dbRef: DatabaseReference
@@ -45,14 +44,14 @@ class PresupuestosActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.rvPresupuestos)
         rv.layoutManager = LinearLayoutManager(this)
         adapter = PresupuestoAdapter(
-            items           = lista,
+            items = lista,
             onEstadoChanged = { p -> dbRef.child(p.id).child("estado").setValue(p.estado) },
-            onDelete        = { p -> dbRef.child(p.id).removeValue() },
-            onEdit          = { p -> showFormDialog(orig = p, isEdit = true, numeroAuto = p.numero) }
+            onDelete = { p -> dbRef.child(p.id).removeValue() },
+            onEdit = { p -> showFormDialog(orig = p, isEdit = true, numeroAuto = p.numero) }
         )
         rv.adapter = adapter
 
-        dbRef.addValueEventListener(object: ValueEventListener {
+        dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
                 val nuevas = snap.children
                     .filter { it.hasChildren() }
@@ -62,9 +61,9 @@ class PresupuestosActivity : AppCompatActivity() {
                 lista.addAll(nuevas)
                 adapter.notifyDataSetChanged()
             }
+
             override fun onCancelled(err: DatabaseError) {
-                Toast.makeText(this@PresupuestosActivity,
-                    "Error: ${err.message}", Toast.LENGTH_SHORT).show()
+                toastConLogo("Error: ${err.message}")
             }
         })
 
@@ -72,24 +71,23 @@ class PresupuestosActivity : AppCompatActivity() {
             .setOnClickListener {
                 dbRef.get().addOnSuccessListener { snap ->
                     val count = snap.children.count { it.hasChildren() }
-                    val next  = (count + 1).toString().padStart(5, '0')
+                    val next = "P-" + (count + 1).toString().padStart(5, '0')
                     showFormDialog(orig = null, isEdit = false, numeroAuto = next)
                 }
             }
     }
 
     private fun showFormDialog(orig: Presupuesto?, isEdit: Boolean, numeroAuto: String) {
-        val v = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_presupuesto_form, null)
+        val v = LayoutInflater.from(this).inflate(R.layout.dialog_presupuesto_form, null)
 
         val tvHeader = v.findViewById<TextView>(R.id.tvFormHeader)
         val etNumero = v.findViewById<TextInputEditText>(R.id.etNumero)
-        val etCliente= v.findViewById<TextInputEditText>(R.id.etCliente)
-        val etNIF    = v.findViewById<TextInputEditText>(R.id.etNIF)
-        val etDir    = v.findViewById<TextInputEditText>(R.id.etDireccion)
-        val etTipo   = v.findViewById<TextInputEditText>(R.id.etTipo)
-        val etPago   = v.findViewById<TextInputEditText>(R.id.etPago)
-        val etObs    = v.findViewById<TextInputEditText>(R.id.etObservaciones)
+        val etCliente = v.findViewById<TextInputEditText>(R.id.etCliente)
+        val etNIF = v.findViewById<TextInputEditText>(R.id.etNIF)
+        val etDir = v.findViewById<TextInputEditText>(R.id.etDireccion)
+        val etTipo = v.findViewById<TextInputEditText>(R.id.etTipo)
+        val etPago = v.findViewById<TextInputEditText>(R.id.etPago)
+        val etObs = v.findViewById<TextInputEditText>(R.id.etObservaciones)
 
         if (isEdit) {
             tvHeader.text = "Editar Presupuesto"
@@ -109,34 +107,34 @@ class PresupuestosActivity : AppCompatActivity() {
 
         AlertDialog.Builder(this)
             .setView(v)
-            .setPositiveButton(if (isEdit) "Guardar" else "Crear") { dlg,_ ->
-                val num  = etNumero.text.toString().trim()
-                val cli  = etCliente.text.toString().trim()
-                val nif  = etNIF.text.toString().trim()
-                val dir  = etDir.text.toString().trim()
+            .setPositiveButton(if (isEdit) "Guardar" else "Crear") { dlg, _ ->
+                val num = etNumero.text.toString().trim()
+                val cli = etCliente.text.toString().trim()
+                val nif = etNIF.text.toString().trim()
+                val dir = etDir.text.toString().trim()
                 val tipo = etTipo.text.toString().trim()
                 val pago = etPago.text.toString().trim()
-                val obs  = etObs.text.toString().trim()
+                val obs = etObs.text.toString().trim()
 
                 if (num.isEmpty() || cli.isEmpty()) {
-                    Toast.makeText(this,
-                        "Número y cliente obligatorios", Toast.LENGTH_SHORT).show()
+                    toastConLogo("Número y cliente obligatorios")
                 } else {
                     if (!isEdit) {
                         val ref = dbRef.push()
                         val p = Presupuesto(
-                            id               = ref.key ?: "",
-                            numero           = num,
-                            fecha            = System.currentTimeMillis(),
-                            clienteNombre    = cli,
-                            clienteNIF       = nif,
+                            id = ref.key ?: "",
+                            numero = num,
+                            fecha = System.currentTimeMillis(),
+                            clienteNombre = cli,
+                            clienteNIF = nif,
                             clienteDireccion = dir,
-                            tipoPresupuesto     = tipo,
-                            formaPago        = pago,
-                            observaciones    = obs,
-                            estado           = "pendiente"
+                            tipoPresupuesto = tipo,
+                            formaPago = pago,
+                            observaciones = obs,
+                            estado = "pendiente"
                         )
                         ref.setValue(p)
+
                         Thread {
                             try {
                                 val props = Properties().apply {
@@ -145,7 +143,7 @@ class PresupuestosActivity : AppCompatActivity() {
                                     put("mail.smtp.host", "smtp.gmail.com")
                                     put("mail.smtp.port", "587")
                                 }
-                                val session = Session.getInstance(props, object: Authenticator() {
+                                val session = Session.getInstance(props, object : Authenticator() {
                                     override fun getPasswordAuthentication() =
                                         PasswordAuthentication(EMAIL_ORIGEN, PASSWORD_EMAIL)
                                 })
@@ -159,26 +157,41 @@ class PresupuestosActivity : AppCompatActivity() {
                                     setText("Presupuesto #$num solicitado por $cli.")
                                 }
                                 Transport.send(msg)
-                            } catch(e: Exception) {
+                            } catch (e: Exception) {
                                 e.printStackTrace()
                             }
                         }.start()
+
+                        toastConLogo("Presupuesto creado y enviado correctamente")
                     } else {
                         val p = orig!!.copy(
-                            numero        = num,
+                            numero = num,
                             clienteNombre = cli,
-                            clienteNIF    = nif,
+                            clienteNIF = nif,
                             clienteDireccion = dir,
-                            tipoPresupuesto  = tipo,
-                            formaPago     = pago,
+                            tipoPresupuesto = tipo,
+                            formaPago = pago,
                             observaciones = obs
                         )
                         dbRef.child(p.id).setValue(p)
+                        toastConLogo("Presupuesto actualizado correctamente")
                     }
                     dlg.dismiss()
                 }
             }
             .setNegativeButton("Cancelar", null)
             .show()
+    }
+
+    private fun toastConLogo(msg: String) {
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        layout.findViewById<TextView>(R.id.toastText).text = msg
+
+        Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
+            setGravity(android.view.Gravity.CENTER, 0, 250)
+            show()
+        }
     }
 }

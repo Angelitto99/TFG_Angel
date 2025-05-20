@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card="http://schemas.android.com/apk/res-auto"
@@ -12,15 +13,26 @@
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <!-- Número en negrita y negro -->
+        <!-- Tipo de presupuesto en negrita -->
+        <TextView
+            android:id="@+id/tvPresupuestoTipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Instalación eléctrica"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+
+        <!-- Número debajo del tipo -->
         <TextView
             android:id="@+id/tvPresupuestoNumero"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Presupuesto #000"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"/>
+            android:layout_below="@id/tvPresupuestoTipo"
+            android:layout_marginTop="2dp"
+            android:text="Presupuesto #P-00001"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"/>
 
         <!-- Cliente debajo del número -->
         <TextView
@@ -33,12 +45,23 @@
             android:textSize="14sp"
             android:textColor="@android:color/darker_gray"/>
 
-        <!-- Fecha debajo del cliente -->
+        <!-- Comunidad (Dirección) debajo del cliente -->
+        <TextView
+            android:id="@+id/tvPresupuestoComunidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvPresupuestoCliente"
+            android:layout_marginTop="2dp"
+            android:text="Comunidad XYZ"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray" />
+
+        <!-- Fecha debajo de la comunidad -->
         <TextView
             android:id="@+id/tvPresupuestoFecha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvPresupuestoCliente"
+            android:layout_below="@id/tvPresupuestoComunidad"
             android:layout_marginTop="4dp"
             android:text="2025-05-10"
             android:textSize="14sp"

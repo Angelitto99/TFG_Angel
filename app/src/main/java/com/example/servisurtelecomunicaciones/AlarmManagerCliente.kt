@@ -40,7 +40,7 @@ class AlarmManagerCliente : BroadcastReceiver() {
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notificacion)
+            .setSmallIcon(R.drawable.ic_logonoti)
             .setContentTitle("¿Todo va bien?")
             .setContentText("Revisa tus servicios. Puedes reportar una incidencia si hace falta.")
             .setContentIntent(pendingIntent)
