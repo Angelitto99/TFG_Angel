@@ -10,7 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
 
 class IncidenciaAdapter(
     private var items: MutableList<Incidencia>,
@@ -26,8 +26,7 @@ class IncidenciaAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_incidencia, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_incidencia, parent, false)
         return VH(v)
     }
 
@@ -45,10 +44,10 @@ class IncidenciaAdapter(
         holder.tvEstado.setTextColor(
             ctx.getColor(
                 when (inc.estado.lowercase()) {
-                    "abierta"   -> android.R.color.holo_green_dark
+                    "abierta" -> android.R.color.holo_green_dark
                     "pendiente" -> android.R.color.holo_orange_dark
-                    "cerrada"   -> android.R.color.darker_gray
-                    else        -> android.R.color.black
+                    "cerrada" -> android.R.color.darker_gray
+                    else -> android.R.color.black
                 }
             )
         )
@@ -63,8 +62,7 @@ class IncidenciaAdapter(
     }
 
     private fun showDetailDialog(ctx: Context, inc: Incidencia, fechaStr: String) {
-        val dialogView = LayoutInflater.from(ctx)
-            .inflate(R.layout.dialog_incidencia_detail, null)
+        val dialogView = LayoutInflater.from(ctx).inflate(R.layout.dialog_incidencia_detail, null)
 
         dialogView.findViewById<TextView>(R.id.tvDialogUsuarioVal).text = inc.usuarioEmail
         dialogView.findViewById<TextView>(R.id.tvDialogFechaVal).text = fechaStr
@@ -86,7 +84,7 @@ class IncidenciaAdapter(
         val opciones = arrayOf("Abierta", "Pendiente", "Cerrada")
         val current = opciones.indexOfFirst { it.equals(inc.estado, ignoreCase = true) }
 
-        AlertDialog.Builder(ctx)
+        val dialog = AlertDialog.Builder(ctx, R.style.MyAlertDialogTheme)
             .setTitle("Cambiar estado")
             .setSingleChoiceItems(opciones, if (current >= 0) current else 0) { dlg, which ->
                 inc.estado = opciones[which].lowercase()
@@ -95,7 +93,10 @@ class IncidenciaAdapter(
                 dlg.dismiss()
             }
             .setNegativeButton("Cancelar", null)
-            .show()
+            .create()
+
+        dialog.show()
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(ctx.getColor(android.R.color.holo_blue_dark))
     }
 
     private fun confirmarBorrado(ctx: Context, inc: Incidencia, pos: Int) {
@@ -130,7 +131,6 @@ class IncidenciaAdapter(
     }
 }
 
-// ✅ Extensión para usar toastConLogo desde Context (útil en adapters)
 fun Context.toastConLogo(msg: String) {
     val layout = LayoutInflater.from(this).inflate(R.layout.toast_custom_logo, null)
     layout.findViewById<TextView>(R.id.toastText).text = msg

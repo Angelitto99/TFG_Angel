@@ -9,10 +9,9 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-
-    <!-- Opcional: solo si mantienes compatibilidad con Android 12 o menos -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <!-- Para dispositivos sin cámara obligatoria -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -23,9 +22,9 @@
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/Theme.ServisurTelecomunicaciones">
 
-        <!-- 🏁 Launcher -->
+        <!-- ✅ Login es la pantalla inicial -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize">
@@ -35,13 +34,12 @@
             </intent-filter>
         </activity>
 
-        <!-- 🔐 Login y registro -->
-        <activity android:name=".LoginActivity" android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".RegisterActivity" android:screenOrientation="portrait"
+        <!-- 🔐 Registro -->
+        <activity android:name=".RegisterActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
-        <!-- 🏠 Homes -->
+        <!-- 🏠 Home -->
         <activity android:name=".HomeActivity" android:screenOrientation="portrait" />
         <activity android:name=".AdminHomeActivity" android:screenOrientation="portrait" />
 
@@ -69,7 +67,7 @@
         <activity android:name=".PorteroInfoActivity" android:screenOrientation="portrait" />
         <activity android:name=".BrandInfoActivity" android:screenOrientation="portrait" />
 
-        <!-- ✅ AlarmManager receivers -->
+        <!-- ✅ AlarmManager -->
         <receiver android:name=".AlarmManagerCliente" android:exported="true" />
         <receiver android:name=".AlarmManagerAdmin" android:exported="true" />
 

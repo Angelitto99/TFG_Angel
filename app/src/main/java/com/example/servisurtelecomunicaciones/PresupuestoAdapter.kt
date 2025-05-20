@@ -44,7 +44,6 @@ class PresupuestoAdapter(
         holder.tvCli.text = p.clienteNombre
         holder.tvFec.text = dateFmt.format(Date(p.fecha))
 
-        // Color del estado en el item
         val colorInline = when (p.estado.lowercase()) {
             "aceptado"  -> android.R.color.holo_green_dark
             "pendiente" -> android.R.color.holo_orange_dark
@@ -54,17 +53,15 @@ class PresupuestoAdapter(
         holder.tvEst.setTextColor(ctx.getColor(colorInline))
         holder.tvEst.text = p.estado.replaceFirstChar { it.uppercase() }
 
-        // Click en la tarjeta: mostrar detalle
         holder.itemView.setOnClickListener {
             showDetailDialog(ctx, p, position)
         }
 
-        // Cambiar estado inline
         holder.tvEst.setOnClickListener {
             val opts = arrayOf("Pendiente", "Aceptado", "Denegado")
-            val sel  = opts.indexOfFirst { it.lowercase() == p.estado.lowercase() }
-                .coerceAtLeast(0)
-            AlertDialog.Builder(ctx)
+            val sel = opts.indexOfFirst { it.equals(p.estado, ignoreCase = true) }.coerceAtLeast(0)
+
+            AlertDialog.Builder(ctx, R.style.MyAlertDialogTheme)
                 .setTitle("Cambiar estado")
                 .setSingleChoiceItems(opts, sel) { dlg, which ->
                     p.estado = opts[which].lowercase()
@@ -76,7 +73,6 @@ class PresupuestoAdapter(
                 .show()
         }
 
-        // Borrar
         holder.ivDel.setOnClickListener {
             AlertDialog.Builder(ctx)
                 .setTitle("Borrar presupuesto")
@@ -93,26 +89,24 @@ class PresupuestoAdapter(
     }
 
     private fun showDetailDialog(ctx: Context, p: Presupuesto, pos: Int) {
-        val v = LayoutInflater.from(ctx)
-            .inflate(R.layout.dialog_presupuesto_detail, null)
+        val v = LayoutInflater.from(ctx).inflate(R.layout.dialog_presupuesto_detail, null)
 
-        // Rellenar campos
-        v.findViewById<TextView>(R.id.tvDetNumero).text    = p.numero
-        v.findViewById<TextView>(R.id.tvDetCliente).text   = p.clienteNombre
-        v.findViewById<TextView>(R.id.tvDetNIF).text       = p.clienteNIF
+        v.findViewById<TextView>(R.id.tvDetNumero).text = p.numero
+        v.findViewById<TextView>(R.id.tvDetCliente).text = p.clienteNombre
+        v.findViewById<TextView>(R.id.tvDetNIF).text = p.clienteNIF
         v.findViewById<TextView>(R.id.tvDetDireccion).text = p.clienteDireccion
-        v.findViewById<TextView>(R.id.tvDetFecha).text     = dateFmt.format(Date(p.fecha))
-        v.findViewById<TextView>(R.id.tvDetTipo).text      = p.tipoPresupuesto
-        v.findViewById<TextView>(R.id.tvDetPago).text      = p.formaPago
-        v.findViewById<TextView>(R.id.tvDetObs).text       = p.observaciones
+        v.findViewById<TextView>(R.id.tvDetFecha).text = dateFmt.format(Date(p.fecha))
+        v.findViewById<TextView>(R.id.tvDetTipo).text = p.tipoPresupuesto
+        v.findViewById<TextView>(R.id.tvDetPago).text = p.formaPago
+        v.findViewById<TextView>(R.id.tvDetObs).text = p.observaciones
 
-        // Color del estado en el detalle
         val colorRes = when (p.estado.lowercase()) {
             "aceptado"  -> android.R.color.holo_green_dark
             "pendiente" -> android.R.color.holo_orange_dark
             "denegado"  -> android.R.color.holo_red_dark
             else        -> android.R.color.black
         }
+
         val tvE = v.findViewById<TextView>(R.id.tvDetEstado)
         tvE.text = p.estado.replaceFirstChar { it.uppercase() }
         tvE.setTextColor(ctx.getColor(colorRes))
@@ -122,9 +116,9 @@ class PresupuestoAdapter(
             .setNegativeButton("Cambiar estado") { dlg, _ ->
                 dlg.dismiss()
                 val opts = arrayOf("Pendiente", "Aceptado", "Denegado")
-                val sel  = opts.indexOfFirst { it.lowercase() == p.estado.lowercase() }
-                    .coerceAtLeast(0)
-                AlertDialog.Builder(ctx)
+                val sel = opts.indexOfFirst { it.equals(p.estado, ignoreCase = true) }.coerceAtLeast(0)
+
+                AlertDialog.Builder(ctx, R.style.MyAlertDialogTheme)
                     .setTitle("Cambiar estado")
                     .setSingleChoiceItems(opts, sel) { d, which ->
                         p.estado = opts[which].lowercase()

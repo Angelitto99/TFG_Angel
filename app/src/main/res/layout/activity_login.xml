@@ -13,6 +13,7 @@
         android:layout_marginTop="48dp"
         android:gravity="center_horizontal">
 
+        <!-- Logo -->
         <ImageView
             android:id="@+id/logo"
             android:layout_width="match_parent"
@@ -21,6 +22,7 @@
             android:layout_marginBottom="16dp"
             android:contentDescription="Logo Servisur" />
 
+        <!-- Email y Password -->
         <EditText
             android:id="@+id/mail"
             android:layout_width="match_parent"
@@ -41,6 +43,7 @@
             android:padding="10dp"
             android:layout_marginBottom="8dp" />
 
+        <!-- Switch -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,6 +57,7 @@
                 android:text="Entrar como administrador" />
         </LinearLayout>
 
+        <!-- PIN -->
         <EditText
             android:id="@+id/pinField"
             android:layout_width="match_parent"
@@ -65,6 +69,7 @@
             android:visibility="gone"
             android:layout_marginBottom="12dp" />
 
+        <!-- Botones Login y Registro -->
         <Button
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
@@ -85,15 +90,15 @@
             android:background="@drawable/rounded_button_gray"
             android:textColor="@android:color/white"
             android:padding="12dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="24dp" />
 
-        <!-- ✅ LÍNEA SEPARADORA -->
+        <!-- Separador -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="16dp">
 
             <View
                 android:layout_width="0dp"
@@ -114,17 +119,17 @@
                 android:background="@android:color/darker_gray" />
         </LinearLayout>
 
-        <!-- TEXTO -->
+        <!-- Texto -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="También puedes acceder con:"
             android:textColor="@android:color/black"
             android:textSize="12sp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="12dp"
             android:layout_gravity="center_horizontal" />
 
-        <!-- BOTÓN INVITADO -->
+        <!-- Botón Invitado -->
         <Button
             android:id="@+id/btnGuest"
             android:layout_width="match_parent"
@@ -134,9 +139,9 @@
             android:background="@drawable/rounded_button_purple"
             android:textColor="@android:color/white"
             android:padding="12dp"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="32dp" />
 
-        <!-- POLÍTICAS -->
+        <!-- Política -->
         <TextView
             android:id="@+id/tvPrivacy"
             android:layout_width="wrap_content"
@@ -144,7 +149,6 @@
             android:text="Política de Privacidad y Términos de Servicio."
             android:textSize="12sp"
             android:textColor="#2962FF"
-            android:layout_marginTop="24dp"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
 </ScrollView>

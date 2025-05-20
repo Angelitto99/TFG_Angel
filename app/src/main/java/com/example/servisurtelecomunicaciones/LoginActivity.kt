@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.*
-import de.hdodenhof.circleimageview.CircleImageView
 
 class LoginActivity : AppCompatActivity() {
 
@@ -59,8 +58,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         val html = """
-            <a href="https://www.example.com/privacy">Política de Privacidad</a> y
-            <a href="https://www.example.com/terms">Términos de Servicio</a>.
+            <a href=\"https://www.example.com/privacy\">Política de Privacidad</a> y
+            <a href=\"https://www.example.com/terms\">Términos de Servicio</a>.
         """.trimIndent()
         tvPrivacy.text = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY)
         tvPrivacy.movementMethod = LinkMovementMethod.getInstance()

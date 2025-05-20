@@ -74,7 +74,7 @@ class IncidentActivity : AppCompatActivity() {
             if (nombre.isNotEmpty() && telefono.length == 12 && ubicacion.isNotEmpty() && desc.isNotEmpty()) {
                 enviarCorreoYGuardar(nombre, telefono, ubicacion, desc)
             } else {
-                showCenteredToast("Por favor completa todos los campos correctamente.")
+                toastConLogo("Por favor completa todos los campos correctamente.")
                 btnEnviar.isEnabled = true
             }
         }
@@ -94,7 +94,7 @@ class IncidentActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 captureFromCamera()
             } else {
-                showCenteredToast("Permiso de cámara denegado")
+                toastConLogo("Permiso de cámara denegado")
             }
         }
     }
@@ -177,13 +177,13 @@ class IncidentActivity : AppCompatActivity() {
                 dbRef.setValue(incidencia)
 
                 runOnUiThread {
-                    showCenteredToast("¡Incidencia enviada correctamente!")
+                    toastConLogo("¡Incidencia enviada correctamente!")
                     finish()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 runOnUiThread {
-                    showCenteredToast("Error: ${e.localizedMessage}")
+                    toastConLogo("Error: ${e.localizedMessage}")
                     btnEnviar.isEnabled = true
                 }
             }
@@ -216,8 +216,13 @@ class IncidentActivity : AppCompatActivity() {
         })
     }
 
-    private fun showCenteredToast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).apply {
+    private fun toastConLogo(msg: String) {
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        layout.findViewById<TextView>(R.id.toastText).text = msg
+
+        Toast(applicationContext).apply {
+            duration = Toast.LENGTH_SHORT
+            view = layout
             setGravity(Gravity.CENTER, 0, 400)
             show()
         }
