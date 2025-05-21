@@ -14,7 +14,8 @@ data class Factura(
     val total: Double = 0.0,
     val formaPago: String = "",
     val observaciones: String = "",
-    var estado: String = "pendiente"                // pendiente / pagada
+    var estado: String = "pendiente",
+    val usuarioId: String = ""
 )
 
 data class LineaFactura(

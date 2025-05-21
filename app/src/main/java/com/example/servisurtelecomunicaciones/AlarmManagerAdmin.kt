@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.content.pm.PackageManager
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -38,10 +39,14 @@ class AlarmManagerAdmin : BroadcastReceiver() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        val collapsedView = RemoteViews(context.packageName, R.layout.notificacion_collapsed)
+        val expandedView = RemoteViews(context.packageName, R.layout.notificacion_expanded)
+
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_logonoti)
-            .setContentTitle("Revisión diaria de pendientes")
-            .setContentText("Revisa presupuestos y facturas pendientes.")
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setCustomContentView(collapsedView)
+            .setCustomBigContentView(expandedView)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

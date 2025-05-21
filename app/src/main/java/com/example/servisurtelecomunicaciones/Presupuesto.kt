@@ -1,7 +1,7 @@
 package com.example.servisurtelecomunicaciones
 
 data class Presupuesto(
-    var id: String = "",
+    val id: String = "",
     val numero: String = "",
     val fecha: Long = System.currentTimeMillis(),
     val clienteNombre: String = "",
@@ -10,5 +10,6 @@ data class Presupuesto(
     val tipoPresupuesto: String = "",
     val formaPago: String = "",
     val observaciones: String = "",
-    var estado: String = "pendiente"
+    var estado: String = "pendiente",
+    val usuarioId: String = ""
 )

@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Incidencia(
     val id: String = "",
+    val usuarioId: String = "",
     val usuarioEmail: String = "",
     val nombre: String = "",
     val telefono: String = "",

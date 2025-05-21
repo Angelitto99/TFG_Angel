@@ -118,9 +118,7 @@ class IncidentActivity : AppCompatActivity() {
                 data?.data?.let { uri ->
                     val file = File(cacheDir, "image_attachment.jpg")
                     contentResolver.openInputStream(uri)?.use { input ->
-                        FileOutputStream(file).use { output ->
-                            input.copyTo(output)
-                        }
+                        FileOutputStream(file).use { output -> input.copyTo(output) }
                     }
                     tempImageFile = file
                     selectedImageUri = uri
@@ -133,9 +131,7 @@ class IncidentActivity : AppCompatActivity() {
                 val photo = data?.extras?.get("data") as? android.graphics.Bitmap
                 photo?.let {
                     val file = File(cacheDir, "captured_image.jpg")
-                    FileOutputStream(file).use { out ->
-                        it.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, out)
-                    }
+                    FileOutputStream(file).use { out -> it.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, out) }
                     tempImageFile = file
                     selectedImageUri = Uri.fromFile(file)
                     imageView.setImageBitmap(it)
@@ -148,10 +144,13 @@ class IncidentActivity : AppCompatActivity() {
     private fun enviarCorreoYGuardar(nombre: String, telefono: String, ubicacion: String, descripcion: String) {
         Thread {
             try {
-                val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email ?: "Desconocido"
+                val currentUser = FirebaseAuth.getInstance().currentUser
+                val usuarioEmail = currentUser?.email ?: "Desconocido"
+                val usuarioId = currentUser?.uid ?: ""
+
                 val mensaje = """
                     Se ha registrado una nueva incidencia:
-                    Usuario: $currentUserEmail
+                    Usuario: $usuarioEmail
                     Nombre: $nombre
                     Teléfono: $telefono
                     Ubicación: $ubicacion
@@ -168,7 +167,8 @@ class IncidentActivity : AppCompatActivity() {
                 val dbRef = FirebaseDatabase.getInstance().getReference("incidencias").push()
                 val incidencia = Incidencia(
                     id = dbRef.key ?: "",
-                    usuarioEmail = currentUserEmail,
+                    usuarioId = usuarioId,
+                    usuarioEmail = usuarioEmail,
                     nombre = nombre,
                     telefono = telefono,
                     ubicacion = ubicacion,

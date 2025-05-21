@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.util.*
 import javax.mail.Authenticator
@@ -41,6 +42,9 @@ class FacturasActivity : AppCompatActivity() {
         val base = "https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com"
         dbRef = FirebaseDatabase.getInstance(base).getReference("facturas")
 
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val uid = currentUser?.uid
+
         val rv = findViewById<RecyclerView>(R.id.rvFacturas)
         rv.layoutManager = LinearLayoutManager(this)
         adapter = FacturaAdapter(
@@ -55,6 +59,7 @@ class FacturasActivity : AppCompatActivity() {
             override fun onDataChange(snap: DataSnapshot) {
                 val nuevas = snap.children
                     .mapNotNull { it.getValue(Factura::class.java) }
+                    .filter { it.usuarioId == uid }
                     .sortedByDescending { it.fecha }
                 lista.clear()
                 lista.addAll(nuevas)
@@ -130,6 +135,8 @@ class FacturasActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setView(v)
             .setPositiveButton(if (isEdit) "Guardar" else "Crear") { dlg, _ ->
+                val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
+
                 val num = etNumero.text.toString().trim()
                 val cli = etCliente.text.toString().trim()
                 val nif = etNIF.text.toString().trim()
@@ -159,7 +166,8 @@ class FacturasActivity : AppCompatActivity() {
                             total = tot,
                             formaPago = pago,
                             observaciones = obs,
-                            estado = "pendiente"
+                            estado = "pendiente",
+                            usuarioId = uid
                         )
                         ref.setValue(f)
 
@@ -177,10 +185,7 @@ class FacturasActivity : AppCompatActivity() {
                                 })
                                 val msg = MimeMessage(session).apply {
                                     setFrom(InternetAddress(EMAIL_ORIGEN))
-                                    setRecipients(
-                                        Message.RecipientType.TO,
-                                        InternetAddress.parse(EMAIL_DESTINO)
-                                    )
+                                    setRecipients(Message.RecipientType.TO, InternetAddress.parse(EMAIL_DESTINO))
                                     subject = "Nueva factura #$num"
                                     setText("Factura #$num por ${"%.2f".format(tot)} € creada para $cli.")
                                 }

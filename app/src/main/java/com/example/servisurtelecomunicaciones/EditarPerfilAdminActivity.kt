@@ -21,6 +21,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.exifinterface.media.ExifInterface
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.File
 import java.io.FileOutputStream
@@ -29,11 +31,6 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
 
     companion object {
         private const val PREFS = "prefs"
-        private const val KEY_NAME = "admin_name"
-        private const val KEY_AVATAR = "admin_avatar"
-        private const val KEY_NOTIFS = "user_notifs"
-        private const val KEY_PHONE = "admin_phone"
-        private const val KEY_COMPANY = "admin_company"
         private const val RC_PICK_PHOTO = 1001
         private const val RC_NOTIF_PERM = 2001
     }
@@ -46,6 +43,7 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
     private lateinit var btnGuardar: Button
     private lateinit var btnCambiarPass: Button
     private lateinit var tvSaludo: TextView
+    private var avatarPath: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,21 +58,25 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
         btnCambiarPass = findViewById(R.id.btnCambiarPass)
         tvSaludo = findViewById(R.id.tvHolaUsuario)
 
-        val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val ref = FirebaseDatabase.getInstance().getReference("perfiles/admins/$uid")
 
-        etNombre.setText(prefs.getString(KEY_NAME, ""))
-        etTelefono.setText(prefs.getString(KEY_PHONE, ""))
-        etEmpresa.setText(prefs.getString(KEY_COMPANY, ""))
-        swNotifs.isChecked = prefs.getBoolean(KEY_NOTIFS, false)
-        tvSaludo.text = "Hola, ${etNombre.text}"
+        ref.get().addOnSuccessListener { snapshot ->
+            etNombre.setText(snapshot.child("nombre").value as? String ?: "")
+            etTelefono.setText(snapshot.child("telefono").value as? String ?: "")
+            etEmpresa.setText(snapshot.child("empresa").value as? String ?: "")
+            swNotifs.isChecked = snapshot.child("notificaciones").getValue(Boolean::class.java) ?: false
+            tvSaludo.text = "Hola, ${etNombre.text}"
 
-        prefs.getString(KEY_AVATAR, null)?.let { path ->
-            val file = File(path)
-            if (file.exists()) {
-                ivAvatar.setImageBitmap(BitmapFactory.decodeFile(file.absolutePath))
-            } else {
-                ivAvatar.setImageResource(R.drawable.ic_perfil)
-            }
+            avatarPath = snapshot.child("avatarPath").value as? String
+            avatarPath?.let {
+                val file = File(it)
+                if (file.exists()) {
+                    ivAvatar.setImageBitmap(BitmapFactory.decodeFile(it))
+                } else {
+                    ivAvatar.setImageResource(R.drawable.ic_perfil)
+                }
+            } ?: ivAvatar.setImageResource(R.drawable.ic_perfil)
         }
 
         ivAvatar.setOnClickListener { pickImage() }
@@ -93,35 +95,34 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
         })
 
         btnGuardar.setOnClickListener {
-            prefs.edit()
-                .putString(KEY_NAME, etNombre.text.toString())
-                .putString(KEY_PHONE, etTelefono.text.toString())
-                .putString(KEY_COMPANY, etEmpresa.text.toString())
-                .putBoolean(KEY_NOTIFS, swNotifs.isChecked)
-                .putBoolean("is_admin", true)
-                .apply()
+            val nombre = etNombre.text.toString()
+            val telefono = etTelefono.text.toString()
+            val empresa = etEmpresa.text.toString()
+            val notifs = swNotifs.isChecked
 
-            tvSaludo.text = "Hola, ${etNombre.text}"
+            val data = mapOf(
+                "nombre" to nombre,
+                "telefono" to telefono,
+                "empresa" to empresa,
+                "notificaciones" to notifs,
+                "avatarPath" to avatarPath
+            )
 
-            if (swNotifs.isChecked) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                        RC_NOTIF_PERM
-                    )
+            ref.setValue(data).addOnSuccessListener {
+                tvSaludo.text = "Hola, $nombre"
+                if (notifs) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                        ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), RC_NOTIF_PERM)
+                    } else {
+                        AlarmManagerAdmin.programarAlarmaDiaria(this)
+                    }
                 } else {
-                    AlarmManagerAdmin.programarAlarmaDiaria(this)
+                    AlarmManagerAdmin.cancelarAlarma(this)
                 }
-            } else {
-                AlarmManagerAdmin.cancelarAlarma(this)
+                toastConLogo("Perfil guardado correctamente")
+                finish()
             }
-
-            toastConLogo("Perfil guardado correctamente")
-            finish()
         }
 
         btnCambiarPass.setOnClickListener {
@@ -141,18 +142,12 @@ class EditarPerfilAdminActivity : AppCompatActivity() {
             data?.data?.let { uri ->
                 try {
                     val correctedBitmap = rotateImageIfRequired(this, uri)
-
-                    val avatarFile = File(filesDir, "avatar_admin.jpg")
-                    val outputStream = FileOutputStream(avatarFile)
+                    val file = File(filesDir, "avatar_admin_${FirebaseAuth.getInstance().currentUser?.uid}.jpg")
+                    val outputStream = FileOutputStream(file)
                     correctedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                     outputStream.close()
-
+                    avatarPath = file.absolutePath
                     ivAvatar.setImageBitmap(correctedBitmap)
-
-                    getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-                        .edit()
-                        .putString(KEY_AVATAR, avatarFile.absolutePath)
-                        .apply()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

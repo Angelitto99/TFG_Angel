@@ -7,21 +7,17 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.os.Bundle
 import android.view.Gravity
-import android.widget.*
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.File
 
 class AdminHomeActivity : AppCompatActivity() {
-
-    companion object {
-        private const val PREFS = "prefs"
-        private const val KEY_NAME = "admin_name"
-        private const val KEY_AVATAR = "admin_avatar"
-        private const val KEY_NOTIFS = "user_notifs"
-    }
 
     private lateinit var ivAvatar: CircleImageView
     private lateinit var tvGreeting: TextView
@@ -31,9 +27,9 @@ class AdminHomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_home)
 
-        ivAvatar = findViewById(R.id.ivAdminAvatar)
+        ivAvatar   = findViewById(R.id.ivAdminAvatar)
         tvGreeting = findViewById(R.id.tvHolaAdmin)
-        btnLogout = findViewById(R.id.btnCerrarSesionAdmin)
+        btnLogout  = findViewById(R.id.btnCerrarSesionAdmin)
 
         ivAvatar.setOnClickListener {
             startActivity(Intent(this, EditarPerfilAdminActivity::class.java))
@@ -57,19 +53,14 @@ class AdminHomeActivity : AppCompatActivity() {
 
         btnLogout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
-
-            val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            prefs.edit()
-                .remove("is_guest")
-                .remove("is_admin")
+            getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                .edit()
+                .clear()
                 .apply()
-
             toastConLogo("Sesión cerrada correctamente")
-
-            Intent(this, LoginActivity::class.java).also { intent ->
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-            }
+            startActivity(Intent(this, LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
             finish()
         }
     }
@@ -77,52 +68,61 @@ class AdminHomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val nombre = prefs.getString(KEY_NAME, "Admin") ?: "Admin"
-        tvGreeting.text = "Hola, $nombre"
+        val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+            ?: prefs.getString("last_uid", "")!!.also {
+                // si el usuario vino por "olvidé contraseña", usamos last_uid
+            }
 
-        val avatarPath = prefs.getString(KEY_AVATAR, null)
-        if (avatarPath != null) {
-            val file = File(avatarPath)
-            if (file.exists()) {
-                ivAvatar.setImageBitmap(getCorrectlyOrientedBitmap(file.absolutePath))
+        val ref = FirebaseDatabase.getInstance()
+            .getReference("perfiles/admins/$uid")
+
+        ref.get().addOnSuccessListener { snapshot ->
+            val nombre     = snapshot.child("nombre").getValue(String::class.java) ?: "Administrador"
+            val avatarPath = snapshot.child("avatarPath").getValue(String::class.java)
+            val notifs     = snapshot.child("notificaciones").getValue(Boolean::class.java) ?: false
+
+            tvGreeting.text = "Hola, $nombre"
+
+            if (avatarPath != null && File(avatarPath).exists()) {
+                ivAvatar.setImageBitmap(getCorrectlyOrientedBitmap(avatarPath))
             } else {
                 ivAvatar.setImageResource(R.drawable.ic_perfil)
             }
-        } else {
-            ivAvatar.setImageResource(R.drawable.ic_perfil)
-        }
 
-        if (prefs.getBoolean(KEY_NOTIFS, false)) {
-            AlarmManagerAdmin.programarAlarmaDiaria(this)
+            if (notifs) AlarmManagerAdmin.programarAlarmaDiaria(this)
+            else        AlarmManagerAdmin.cancelarAlarma(this)
         }
     }
 
-    private fun getCorrectlyOrientedBitmap(imagePath: String): Bitmap {
-        val bitmap = BitmapFactory.decodeFile(imagePath)
-        val exif = androidx.exifinterface.media.ExifInterface(imagePath)
-        val orientation = exif.getAttributeInt(
-            androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION,
-            androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL
-        )
-
-        val matrix = Matrix()
-        when (orientation) {
-            androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
-            androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
-            androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+    private fun getCorrectlyOrientedBitmap(imagePath: String) =
+        BitmapFactory.decodeFile(imagePath).let { bitmap ->
+            val exif = androidx.exifinterface.media.ExifInterface(imagePath)
+            val orient = exif.getAttributeInt(
+                androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION,
+                androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL
+            )
+            Matrix().apply {
+                when (orient) {
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_90  -> postRotate(90f)
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_180 -> postRotate(180f)
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_270 -> postRotate(270f)
+                }
+            }.let { matrix ->
+                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            }
         }
-
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-    }
 
     private fun toastConLogo(msg: String) {
-        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        val layout = layoutInflater.inflate(
+            R.layout.toast_custom_logo,
+            findViewById(android.R.id.content),
+            false
+        )
         layout.findViewById<TextView>(R.id.toastText).text = msg
-
         Toast(applicationContext).apply {
             duration = Toast.LENGTH_SHORT
-            view = layout
+            view     = layout
             setGravity(Gravity.CENTER, 0, 250)
             show()
         }

@@ -11,12 +11,6 @@ import com.google.firebase.database.*
 
 class IncidenciasListActivity : AppCompatActivity() {
 
-    companion object {
-        private val ADMIN_EMAILS = listOf(
-            "admin@servisur.com"
-        )
-    }
-
     private lateinit var adapter: IncidenciaAdapter
     private val lista = mutableListOf<Incidencia>()
     private lateinit var dbRef: DatabaseReference
@@ -34,19 +28,16 @@ class IncidenciasListActivity : AppCompatActivity() {
         adapter = IncidenciaAdapter(
             items = lista,
             onEstadoChanged = { inc ->
-                dbRef.child(inc.id)
-                    .child("estado")
-                    .setValue(inc.estado)
+                dbRef.child(inc.id).child("estado").setValue(inc.estado)
             },
             onDelete = { inc ->
-                dbRef.child(inc.id)
-                    .removeValue { err, _ ->
-                        if (err == null) {
-                            toastConLogo("Incidencia borrada correctamente")
-                        } else {
-                            toastConLogo("Error al borrar: ${err.message}")
-                        }
+                dbRef.child(inc.id).removeValue { err, _ ->
+                    if (err == null) {
+                        toastConLogo("Incidencia borrada correctamente")
+                    } else {
+                        toastConLogo("Error al borrar: ${err.message}")
                     }
+                }
             }
         )
         rv.adapter = adapter
@@ -55,18 +46,17 @@ class IncidenciasListActivity : AppCompatActivity() {
     }
 
     private fun cargarIncidencias() {
-        val me = FirebaseAuth.getInstance().currentUser?.email
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val uid = currentUser?.uid
+
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val nuevas = snapshot.children
-                    .mapNotNull { it.getValue(Incidencia::class.java) }
-                    .filter { me != null && ADMIN_EMAILS.contains(me) }
-                    .filter { ADMIN_EMAILS.contains(it.usuarioEmail) }
-                    .sortedByDescending { it.timestamp }
+                val todas = snapshot.children.mapNotNull { it.getValue(Incidencia::class.java) }
+                val filtradas = todas.filter { it.usuarioId == uid }
 
                 lista.clear()
-                lista.addAll(nuevas)
-                adapter.updateList(nuevas)
+                lista.addAll(filtradas.sortedByDescending { it.timestamp })
+                adapter.updateList(lista)
             }
 
             override fun onCancelled(error: DatabaseError) {

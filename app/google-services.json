@@ -1,8 +1,8 @@
 {
   "project_info": {
     "project_number": "960775025995",
-    "project_id": "servisurtelecomunicacion-223b0",
     "firebase_url": "https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com",
+    "project_id": "servisurtelecomunicacion-223b0",
     "storage_bucket": "servisurtelecomunicacion-223b0.firebasestorage.app"
   },
   "client": [

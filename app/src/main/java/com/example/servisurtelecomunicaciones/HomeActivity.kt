@@ -1,3 +1,4 @@
+// HomeActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.content.Context
@@ -8,11 +9,15 @@ import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.File
 
@@ -20,11 +25,6 @@ class HomeActivity : AppCompatActivity() {
 
     companion object {
         private const val PREFS = "prefs"
-        private const val KEY_NAME = "user_name"
-        private const val KEY_AVATAR = "user_avatar"
-        private const val KEY_NOTIFS = "user_notifs"
-        private const val ADMIN_NAME = "admin_name"
-        private const val ADMIN_AVATAR = "admin_avatar"
     }
 
     private lateinit var ivAvatar: CircleImageView
@@ -34,38 +34,42 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        ivAvatar = findViewById(R.id.ivUserAvatar)
+        ivAvatar   = findViewById(R.id.ivUserAvatar)
         tvGreeting = findViewById(R.id.tvHolaUsuario)
 
+        val prefs   = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val isGuest = prefs.getBoolean("is_guest", false)
+        val isAdmin = prefs.getBoolean("is_admin", false)
+
         ivAvatar.setOnClickListener {
-            val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            val isAdmin = prefs.getBoolean("is_admin", false)
-            if (!prefs.getBoolean("is_guest", false)) {
-                val intent = if (isAdmin) {
-                    Intent(this, EditarPerfilAdminActivity::class.java)
-                } else {
-                    Intent(this, EditarPerfilClienteActivity::class.java)
-                }
-                startActivity(intent)
-            } else {
+            if (isGuest) {
                 toastConLogo("Debes registrarte para acceder al perfil")
+            } else {
+                val next = if (isAdmin)
+                    EditarPerfilAdminActivity::class.java
+                else
+                    EditarPerfilClienteActivity::class.java
+                startActivity(Intent(this, next))
             }
         }
 
         findViewById<CardView>(R.id.Antenas).setOnClickListener {
             startActivity(Intent(this, AntenaActivity::class.java))
         }
-        Glide.with(this).load(R.drawable.ic_satellite_new).into(findViewById(R.id.iconSatelliteTV))
+        Glide.with(this).load(R.drawable.ic_satellite_new)
+            .into(findViewById<ImageView>(R.id.iconSatelliteTV))
 
         findViewById<CardView>(R.id.cardVideoporteros).setOnClickListener {
             startActivity(Intent(this, VideoporteroActivity::class.java))
         }
-        Glide.with(this).load(R.drawable.ic_videoportero_new).into(findViewById(R.id.iconVideoporteros))
+        Glide.with(this).load(R.drawable.ic_videoportero_new)
+            .into(findViewById<ImageView>(R.id.iconVideoporteros))
 
         findViewById<CardView>(R.id.cardElectricidad).setOnClickListener {
             startActivity(Intent(this, ElectricidadActivity::class.java))
         }
-        Glide.with(this).load(R.drawable.ic_electricidad_new).into(findViewById(R.id.iconElectricidad))
+        Glide.with(this).load(R.drawable.ic_electricidad_new)
+            .into(findViewById<ImageView>(R.id.iconElectricidad))
 
         findViewById<CardView>(R.id.cardCCTV).setOnClickListener {
             startActivity(Intent(this, CCTVActivity::class.java))
@@ -87,30 +91,23 @@ class HomeActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.websiteButton).setOnClickListener {
-            val url = "https://www.servisurtelecomunicaciones.com/"
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.servisurtelecomunicaciones.com/")))
         }
 
         findViewById<Button>(R.id.buttonIncident).setOnClickListener {
-            val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            if (!prefs.getBoolean("is_guest", false)) {
-                startActivity(Intent(this, IncidentActivity::class.java))
-            } else {
-                toastConLogo("Debes registrarte para usar esta función")
-            }
+            if (isGuest) toastConLogo("Debes registrarte para usar esta función")
+            else startActivity(Intent(this, IncidentActivity::class.java))
         }
 
         findViewById<Button>(R.id.btnCerrarSesion).setOnClickListener {
             FirebaseAuth.getInstance().signOut()
-
             val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             prefs.edit()
-                .remove("is_guest")
                 .remove("is_admin")
+                .remove("is_guest")
+                .remove("last_uid")
                 .apply()
-
             toastConLogo("Sesión cerrada correctamente")
-
             startActivity(Intent(this, LoginActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
@@ -120,65 +117,72 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val prefs   = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val isGuest = prefs.getBoolean("is_guest", false)
         val isAdmin = prefs.getBoolean("is_admin", false)
+        val uid     = FirebaseAuth.getInstance().currentUser?.uid
+            ?: prefs.getString("last_uid", "")!!
 
-        val nombre = when {
-            isGuest -> "Invitado"
-            isAdmin -> prefs.getString(ADMIN_NAME, "Administrador") ?: "Administrador"
-            else -> prefs.getString(KEY_NAME, "Usuario") ?: "Usuario"
-        }
-        tvGreeting.text = "Hola, $nombre"
-
-        val avatarPath = when {
-            isGuest -> null
-            isAdmin -> prefs.getString(ADMIN_AVATAR, null)
-            else -> prefs.getString(KEY_AVATAR, null)
-        }
-
-        if (avatarPath != null) {
-            val file = File(avatarPath)
-            if (file.exists()) {
-                ivAvatar.setImageBitmap(getCorrectlyOrientedBitmap(file.absolutePath))
-            } else {
-                ivAvatar.setImageResource(R.drawable.ic_perfil)
-            }
-        } else {
+        if (isGuest) {
+            tvGreeting.text = "Hola, Invitado"
             ivAvatar.setImageResource(R.drawable.ic_perfil)
+            return
         }
 
-        if (!isGuest && prefs.getBoolean(KEY_NOTIFS, false)) {
-            if (isAdmin) AlarmManagerAdmin.programarAlarmaDiaria(this)
-            else AlarmManagerCliente.programarAlarmaSemanal(this)
+        if (isAdmin) {
+            FirebaseDatabase.getInstance()
+                .getReference("perfiles/admins/$uid")
+                .get().addOnSuccessListener { snap ->
+                    val nombre     = snap.child("nombre").getValue(String::class.java) ?: "Administrador"
+                    tvGreeting.text = "Hola, $nombre"
+                    val path       = snap.child("avatarPath").getValue(String::class.java)
+                    if (path != null && File(path).exists())
+                        ivAvatar.setImageBitmap(getCorrectlyOrientedBitmap(path))
+                    else
+                        ivAvatar.setImageResource(R.drawable.ic_perfil)
+                    // Puedes también recargar aquí incidencias/facturas si van en tiempo real
+                }
+            return
         }
+
+        // Cliente: leemos SharedPreferences para que refleje lo editado en EditarPerfilCliente
+        val nameKey   = "cliente_${uid}_name"
+        val avatarKey = "cliente_${uid}_avatar"
+        val notifKey  = "cliente_${uid}_notifs"
+
+        tvGreeting.text = "Hola, ${prefs.getString(nameKey, "Usuario")}"
+        prefs.getString(avatarKey, null)?.let { path ->
+            if (File(path).exists()) ivAvatar.setImageBitmap(getCorrectlyOrientedBitmap(path))
+            else ivAvatar.setImageResource(R.drawable.ic_perfil)
+        } ?: ivAvatar.setImageResource(R.drawable.ic_perfil)
     }
 
     private fun getCorrectlyOrientedBitmap(imagePath: String): Bitmap {
         val bitmap = BitmapFactory.decodeFile(imagePath)
-        val exif = androidx.exifinterface.media.ExifInterface(imagePath)
-        val orientation = exif.getAttributeInt(
+        val exif   = androidx.exifinterface.media.ExifInterface(imagePath)
+        val orient = exif.getAttributeInt(
             androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION,
             androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL
         )
-
         val matrix = Matrix()
-        when (orientation) {
-            androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+        when (orient) {
+            androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_90  -> matrix.postRotate(90f)
             androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
             androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
         }
-
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
     private fun toastConLogo(msg: String) {
-        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        val layout = layoutInflater.inflate(
+            R.layout.toast_custom_logo,
+            findViewById(android.R.id.content),
+            false
+        )
         layout.findViewById<TextView>(R.id.toastText).text = msg
-
         Toast(applicationContext).apply {
             duration = Toast.LENGTH_SHORT
-            view = layout
+            view     = layout
             setGravity(Gravity.CENTER, 0, 250)
             show()
         }

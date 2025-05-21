@@ -7,6 +7,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class CambiarPasswordActivity : AppCompatActivity() {
 
@@ -19,13 +20,13 @@ class CambiarPasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cambiar_password)
 
-        etNuevaPass = findViewById(R.id.etNuevaPass)
-        etRepetirPass = findViewById(R.id.etRepetirPass)
-        btnCambiar = findViewById(R.id.btnCambiar)
-        auth = FirebaseAuth.getInstance()
+        etNuevaPass    = findViewById(R.id.etNuevaPass)
+        etRepetirPass  = findViewById(R.id.etRepetirPass)
+        btnCambiar     = findViewById(R.id.btnCambiar)
+        auth           = FirebaseAuth.getInstance()
 
         btnCambiar.setOnClickListener {
-            val nueva = etNuevaPass.text.toString()
+            val nueva   = etNuevaPass.text.toString()
             val repetir = etRepetirPass.text.toString()
 
             if (nueva.length < 6) {
@@ -38,24 +39,40 @@ class CambiarPasswordActivity : AppCompatActivity() {
             }
 
             val user = auth.currentUser
-            user?.updatePassword(nueva)?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    toastConLogo("Contraseña cambiada correctamente")
-                    finish()
-                } else {
-                    toastConLogo("Error al cambiar la contraseña")
-                }
+            if (user == null) {
+                toastConLogo("Debes iniciar sesión primero")
+                return@setOnClickListener
             }
+
+            // Cambio directo de contraseña (usuario autenticado)
+            user.updatePassword(nueva)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Actualizamos el flag en Firebase a false
+                        val uid = user.uid
+                        FirebaseDatabase.getInstance()
+                            .getReference("users")
+                            .child(uid)
+                            .child("needs_password_change")
+                            .setValue(false)
+                        toastConLogo("Contraseña cambiada correctamente")
+                        finish()
+                    } else {
+                        toastConLogo("Error al cambiar la contraseña")
+                    }
+                }
         }
     }
 
     private fun toastConLogo(msg: String) {
-        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        val layout = layoutInflater.inflate(
+            R.layout.toast_custom_logo,
+            findViewById(android.R.id.content), false
+        )
         layout.findViewById<TextView>(R.id.toastText).text = msg
-
         Toast(applicationContext).apply {
             duration = Toast.LENGTH_SHORT
-            view = layout
+            view     = layout
             setGravity(android.view.Gravity.CENTER, 0, 250)
             show()
         }

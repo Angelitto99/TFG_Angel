@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,6 +41,7 @@ class PresupuestosActivity : AppCompatActivity() {
 
         val base = "https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com"
         dbRef = FirebaseDatabase.getInstance(base).getReference("presupuestos")
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
 
         val rv = findViewById<RecyclerView>(R.id.rvPresupuestos)
         rv.layoutManager = LinearLayoutManager(this)
@@ -54,9 +56,10 @@ class PresupuestosActivity : AppCompatActivity() {
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
                 val nuevas = snap.children
-                    .filter { it.hasChildren() }
                     .mapNotNull { it.getValue(Presupuesto::class.java) }
+                    .filter { it.usuarioId == uid }
                     .sortedByDescending { it.fecha }
+
                 lista.clear()
                 lista.addAll(nuevas)
                 adapter.notifyDataSetChanged()
@@ -67,14 +70,13 @@ class PresupuestosActivity : AppCompatActivity() {
             }
         })
 
-        findViewById<FloatingActionButton>(R.id.fabAddPresupuesto)
-            .setOnClickListener {
-                dbRef.get().addOnSuccessListener { snap ->
-                    val count = snap.children.count { it.hasChildren() }
-                    val next = "P-" + (count + 1).toString().padStart(5, '0')
-                    showFormDialog(orig = null, isEdit = false, numeroAuto = next)
-                }
+        findViewById<FloatingActionButton>(R.id.fabAddPresupuesto).setOnClickListener {
+            dbRef.get().addOnSuccessListener { snap ->
+                val count = snap.children.count { it.hasChildren() }
+                val next = "P-" + (count + 1).toString().padStart(5, '0')
+                showFormDialog(orig = null, isEdit = false, numeroAuto = next)
             }
+        }
     }
 
     private fun showFormDialog(orig: Presupuesto?, isEdit: Boolean, numeroAuto: String) {
@@ -108,6 +110,8 @@ class PresupuestosActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setView(v)
             .setPositiveButton(if (isEdit) "Guardar" else "Crear") { dlg, _ ->
+                val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
+
                 val num = etNumero.text.toString().trim()
                 val cli = etCliente.text.toString().trim()
                 val nif = etNIF.text.toString().trim()
@@ -131,7 +135,8 @@ class PresupuestosActivity : AppCompatActivity() {
                             tipoPresupuesto = tipo,
                             formaPago = pago,
                             observaciones = obs,
-                            estado = "pendiente"
+                            estado = "pendiente",
+                            usuarioId = uid
                         )
                         ref.setValue(p)
 
