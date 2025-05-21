@@ -17,14 +17,21 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DatabaseReference
 import java.io.File
 import java.io.FileOutputStream
 
 class IncidentActivity : AppCompatActivity() {
 
-    private val EMAIL_ORIGEN = "servisuravisosapp76@gmail.com"
-    private val PASSWORD_EMAIL = "bnlwvwgrxbpfnqma"
-    private val EMAIL_DESTINO = "telecomunicacionesservisur8@gmail.com"
+    companion object {
+        private const val BASE_URL        = "https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com"
+        private const val EMAIL_ORIGEN    = "servisuravisosapp76@gmail.com"
+        private const val PASSWORD_EMAIL  = "bnlwvwgrxbpfnqma"
+        private const val EMAIL_DESTINO   = "telecomunicacionesservisur8@gmail.com"
+        private const val IMAGE_PICK_CODE = 1001
+        private const val IMAGE_CAMERA_CODE = 1002
+        private const val CAMERA_PERMISSION_CODE = 2001
+    }
 
     private lateinit var nameEditText: EditText
     private lateinit var phoneEditText: EditText
@@ -33,17 +40,14 @@ class IncidentActivity : AppCompatActivity() {
     private lateinit var btnSelectImage: Button
     private lateinit var imageView: ImageView
     private lateinit var btnEnviar: Button
-
-    private var selectedImageUri: Uri? = null
     private var tempImageFile: File? = null
-    private val IMAGE_PICK_CODE = 1001
-    private val IMAGE_CAMERA_CODE = 1002
-    private val CAMERA_PERMISSION_CODE = 2001
+    private var selectedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_incident)
 
+        // Vistas
         nameEditText = findViewById(R.id.nameField)
         phoneEditText = findViewById(R.id.phoneField)
         locationEditText = findViewById(R.id.locationField)
@@ -61,7 +65,8 @@ class IncidentActivity : AppCompatActivity() {
                 .setTitle("Seleccionar imagen")
                 .setItems(opciones) { _, index ->
                     if (index == 0) pickImageFromGallery() else checkCameraPermissionAndCapture()
-                }.show()
+                }
+                .show()
         }
 
         btnEnviar.setOnClickListener {
@@ -81,21 +86,26 @@ class IncidentActivity : AppCompatActivity() {
     }
 
     private fun checkCameraPermissionAndCapture() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
-        } else {
-            captureFromCamera()
-        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_CODE
+            )
+        } else captureFromCamera()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 captureFromCamera()
-            } else {
-                toastConLogo("Permiso de cámara denegado")
-            }
+            else toastConLogo("Permiso de cámara denegado")
         }
     }
 
@@ -112,42 +122,43 @@ class IncidentActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK) return
-
         when (requestCode) {
-            IMAGE_PICK_CODE -> {
-                data?.data?.let { uri ->
-                    val file = File(cacheDir, "image_attachment.jpg")
-                    contentResolver.openInputStream(uri)?.use { input ->
-                        FileOutputStream(file).use { output -> input.copyTo(output) }
-                    }
-                    tempImageFile = file
-                    selectedImageUri = uri
-                    imageView.setImageURI(uri)
-                    imageView.visibility = ImageView.VISIBLE
+            IMAGE_PICK_CODE -> data?.data?.let { uri ->
+                val file = File(cacheDir, "image_attachment.jpg")
+                contentResolver.openInputStream(uri)?.use { input ->
+                    FileOutputStream(file).use { output -> input.copyTo(output) }
                 }
+                tempImageFile = file
+                selectedImageUri = uri
+                imageView.setImageURI(uri)
+                imageView.visibility = ImageView.VISIBLE
             }
 
-            IMAGE_CAMERA_CODE -> {
-                val photo = data?.extras?.get("data") as? android.graphics.Bitmap
-                photo?.let {
-                    val file = File(cacheDir, "captured_image.jpg")
-                    FileOutputStream(file).use { out -> it.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, out) }
-                    tempImageFile = file
-                    selectedImageUri = Uri.fromFile(file)
-                    imageView.setImageBitmap(it)
-                    imageView.visibility = ImageView.VISIBLE
+            IMAGE_CAMERA_CODE -> (data?.extras?.get("data") as? android.graphics.Bitmap)?.let { bmp ->
+                val file = File(cacheDir, "captured_image.jpg")
+                FileOutputStream(file).use { out -> bmp.compress(
+                    android.graphics.Bitmap.CompressFormat.JPEG, 90, out)
                 }
+                tempImageFile = file
+                selectedImageUri = Uri.fromFile(file)
+                imageView.setImageBitmap(bmp)
+                imageView.visibility = ImageView.VISIBLE
             }
         }
     }
 
-    private fun enviarCorreoYGuardar(nombre: String, telefono: String, ubicacion: String, descripcion: String) {
+    private fun enviarCorreoYGuardar(
+        nombre: String,
+        telefono: String,
+        ubicacion: String,
+        descripcion: String
+    ) {
         Thread {
             try {
+                // Envío de correo
                 val currentUser = FirebaseAuth.getInstance().currentUser
                 val usuarioEmail = currentUser?.email ?: "Desconocido"
                 val usuarioId = currentUser?.uid ?: ""
-
                 val mensaje = """
                     Se ha registrado una nueva incidencia:
                     Usuario: $usuarioEmail
@@ -156,25 +167,27 @@ class IncidentActivity : AppCompatActivity() {
                     Ubicación: $ubicacion
                     Descripción: $descripcion
                 """.trimIndent()
-
                 val sender = MailSender(EMAIL_ORIGEN, PASSWORD_EMAIL)
-                if (tempImageFile != null && tempImageFile!!.exists()) {
-                    sender.sendMailWithAttachment("Nueva Incidencia", mensaje, EMAIL_DESTINO, tempImageFile!!.absolutePath)
-                } else {
-                    sender.sendMail("Nueva Incidencia", mensaje, EMAIL_DESTINO)
-                }
+                tempImageFile?.takeIf { it.exists() }
+                    ?.let { sender.sendMailWithAttachment("Nueva Incidencia", mensaje, EMAIL_DESTINO, it.absolutePath) }
+                    ?: sender.sendMail("Nueva Incidencia", mensaje, EMAIL_DESTINO)
 
-                val dbRef = FirebaseDatabase.getInstance().getReference("incidencias").push()
+                // Guardar en RTDB usando la misma base URL
+                val ref: DatabaseReference = FirebaseDatabase
+                    .getInstance(BASE_URL)
+                    .getReference("incidencias")
+                    .push()
                 val incidencia = Incidencia(
-                    id = dbRef.key ?: "",
+                    id = ref.key ?: "",
                     usuarioId = usuarioId,
                     usuarioEmail = usuarioEmail,
                     nombre = nombre,
                     telefono = telefono,
                     ubicacion = ubicacion,
-                    descripcion = descripcion
+                    descripcion = descripcion,
+                    timestamp = System.currentTimeMillis()
                 )
-                dbRef.setValue(incidencia)
+                ref.setValue(incidencia)
 
                 runOnUiThread {
                     toastConLogo("¡Incidencia enviada correctamente!")
@@ -199,27 +212,23 @@ class IncidentActivity : AppCompatActivity() {
                 if (editing) return
                 editing = true
                 s?.let {
-                    if (!it.startsWith("+34")) {
-                        phoneEditText.setText("+34")
-                        phoneEditText.setSelection(phoneEditText.text.length)
-                    } else if (it.length > 12) {
-                        val trimmed = it.substring(0, 12)
-                        phoneEditText.setText(trimmed)
-                        phoneEditText.setSelection(trimmed.length)
+                    when {
+                        !it.startsWith("+34") -> phoneEditText.setText("+34")
+                        it.length > 12        -> phoneEditText.setText(it.substring(0, 12))
                     }
+                    phoneEditText.setSelection(phoneEditText.text.length)
                 }
                 editing = false
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
     private fun toastConLogo(msg: String) {
-        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        val layout = layoutInflater.inflate(R.layout.toast_custom_logo,
+            findViewById(android.R.id.content), false)
         layout.findViewById<TextView>(R.id.toastText).text = msg
-
         Toast(applicationContext).apply {
             duration = Toast.LENGTH_SHORT
             view = layout

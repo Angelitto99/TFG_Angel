@@ -11,9 +11,9 @@ import com.google.firebase.database.*
 
 class IncidenciasListActivity : AppCompatActivity() {
 
+    private lateinit var dbRef: DatabaseReference
     private lateinit var adapter: IncidenciaAdapter
     private val lista = mutableListOf<Incidencia>()
-    private lateinit var dbRef: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,11 +32,10 @@ class IncidenciasListActivity : AppCompatActivity() {
             },
             onDelete = { inc ->
                 dbRef.child(inc.id).removeValue { err, _ ->
-                    if (err == null) {
-                        toastConLogo("Incidencia borrada correctamente")
-                    } else {
-                        toastConLogo("Error al borrar: ${err.message}")
-                    }
+                    toastConLogo(
+                        if (err == null) "Incidencia borrada correctamente"
+                        else "Error al borrar: ${err.message}"
+                    )
                 }
             }
         )
@@ -46,17 +45,21 @@ class IncidenciasListActivity : AppCompatActivity() {
     }
 
     private fun cargarIncidencias() {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        val uid = currentUser?.uid
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
 
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val todas = snapshot.children.mapNotNull { it.getValue(Incidencia::class.java) }
-                val filtradas = todas.filter { it.usuarioId == uid }
+                val filtradas = snapshot.children
+                    .filter { it.hasChildren() }
+                    .mapNotNull { it.getValue(Incidencia::class.java) }
+                    .filter    { it.usuarioId == uid }
+                    .sortedByDescending { it.timestamp }
 
                 lista.clear()
-                lista.addAll(filtradas.sortedByDescending { it.timestamp })
-                adapter.updateList(lista)
+                lista.addAll(filtradas)
+                adapter.notifyDataSetChanged()
+
+                if (filtradas.isEmpty()) toastConLogo("No hay incidencias que mostrar")
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -66,9 +69,12 @@ class IncidenciasListActivity : AppCompatActivity() {
     }
 
     private fun toastConLogo(msg: String) {
-        val layout = layoutInflater.inflate(R.layout.toast_custom_logo, findViewById(android.R.id.content), false)
+        val layout = layoutInflater.inflate(
+            R.layout.toast_custom_logo,
+            findViewById(android.R.id.content),
+            false
+        )
         layout.findViewById<TextView>(R.id.toastText).text = msg
-
         Toast(applicationContext).apply {
             duration = Toast.LENGTH_SHORT
             view = layout
