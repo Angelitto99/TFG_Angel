@@ -33,7 +33,7 @@ class IncidenciasListActivity : AppCompatActivity() {
             onDelete = { inc ->
                 dbRef.child(inc.id).removeValue { err, _ ->
                     toastConLogo(
-                        if (err == null) "Incidencia borrada correctamente"
+                        if (err == null) "Incidencia eliminada correctamente"
                         else "Error al borrar: ${err.message}"
                     )
                 }

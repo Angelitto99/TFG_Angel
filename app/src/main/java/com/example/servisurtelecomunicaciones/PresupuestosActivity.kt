@@ -12,6 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class PresupuestosActivity : AppCompatActivity() {
@@ -19,6 +20,10 @@ class PresupuestosActivity : AppCompatActivity() {
     companion object {
         private const val BASE_URL = "https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com"
     }
+
+    private val EMAIL_ORIGEN = "servisuravisosapp76@gmail.com"
+    private val PASSWORD_EMAIL = "bnlwvwgrxbpfnqma"
+    private val EMAIL_DESTINO = "telecomunicacionesservisur8@gmail.com"
 
     private lateinit var dbRef: DatabaseReference
     private val lista = mutableListOf<Presupuesto>()
@@ -36,7 +41,14 @@ class PresupuestosActivity : AppCompatActivity() {
         adapter = PresupuestoAdapter(
             items = lista,
             onEstadoChanged = { p -> dbRef.child(p.id).child("estado").setValue(p.estado) },
-            onDelete       = { p -> dbRef.child(p.id).removeValue() },
+            onDelete = { inc ->
+                dbRef.child(inc.id).removeValue { err, _ ->
+                    toastConLogo(
+                        if (err == null) "Presupuesto eliminado correctamente"
+                        else "Error al borrar: ${err.message}"
+                    )
+                }
+            },
             onEdit         = { p -> showFormDialog(orig = p, isEdit = true, numeroAuto = p.numero) }
         )
         rv.adapter = adapter
@@ -124,6 +136,28 @@ class PresupuestosActivity : AppCompatActivity() {
                             usuarioId        = uid
                         )
                         ref.setValue(p)
+
+                        val mensaje = """
+                                Presupuesto #${p.numero}
+                                Cliente: ${p.clienteNombre}
+                                NIF: ${p.clienteNIF}
+                                Dirección: ${p.clienteDireccion}
+                                Fecha: ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(p.fecha))}
+                                Tipo: ${p.tipoPresupuesto}
+                                Forma de pago: ${p.formaPago}
+                                
+                                Observaciones: ${p.observaciones}
+                                
+                                Solicitado por: Administrador (${FirebaseAuth.getInstance().currentUser?.email ?: "ID desconocido"})
+                                """.trimIndent()
+                        Thread {
+                            try {
+                                MailSender(EMAIL_ORIGEN, PASSWORD_EMAIL).sendMail("Nuevo presupuesto #${p.numero}", mensaje, EMAIL_DESTINO)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }.start()
+
                         toastConLogo("Presupuesto creado correctamente")
                     } else {
                         val updated = orig!!.copy(
@@ -141,7 +175,9 @@ class PresupuestosActivity : AppCompatActivity() {
                     dlg.dismiss()
                 }
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton("Cancelar") { dlg, _ ->
+                toastConLogo("Se canceló la creación/edición del presupuesto")
+            }
             .show()
     }
 

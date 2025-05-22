@@ -14,6 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class FacturasActivity : AppCompatActivity() {
@@ -21,6 +22,10 @@ class FacturasActivity : AppCompatActivity() {
     companion object {
         private const val BASE_URL = "https://servisurtelecomunicacion-223b0-default-rtdb.firebaseio.com"
     }
+
+    private val EMAIL_ORIGEN = "servisuravisosapp76@gmail.com"
+    private val PASSWORD_EMAIL = "bnlwvwgrxbpfnqma"
+    private val EMAIL_DESTINO = "telecomunicacionesservisur8@gmail.com"
 
     private lateinit var dbRef: DatabaseReference
     private val lista = mutableListOf<Factura>()
@@ -33,18 +38,23 @@ class FacturasActivity : AppCompatActivity() {
         dbRef = FirebaseDatabase.getInstance(BASE_URL).getReference("facturas")
         val uid = FirebaseAuth.getInstance().currentUser?.uid
 
-        // RecyclerView
         val rv = findViewById<RecyclerView>(R.id.rvFacturas)
         rv.layoutManager = LinearLayoutManager(this)
         adapter = FacturaAdapter(
             items = lista,
             onEstadoChanged = { f -> dbRef.child(f.id).child("estado").setValue(f.estado) },
-            onDelete       = { f -> dbRef.child(f.id).removeValue() },
+            onDelete = { inc ->
+                dbRef.child(inc.id).removeValue { err, _ ->
+                    toastConLogo(
+                        if (err == null) "Factura eliminada correctamente"
+                        else "Error al borrar: ${err.message}"
+                    )
+                }
+            },
             onEdit         = { f -> showFormDialog(orig = f, isEdit = true, numeroAuto = f.numero) }
         )
         rv.adapter = adapter
 
-        // Carga y filtro
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val filtradas = snapshot.children
@@ -64,7 +74,6 @@ class FacturasActivity : AppCompatActivity() {
             }
         })
 
-        // Crear nueva factura, numeración basada en lista.size
         findViewById<FloatingActionButton>(R.id.fabAddFactura).setOnClickListener {
             val next = "F-" + (lista.size + 1).toString().padStart(5, '0')
             showFormDialog(orig = null, isEdit = false, numeroAuto = next)
@@ -160,6 +169,32 @@ class FacturasActivity : AppCompatActivity() {
                             usuarioId        = uid
                         )
                         ref.setValue(f)
+
+                        val mensaje = """
+                               Factura #${f.numero}
+                                    Cliente: ${f.clienteNombre}
+                                    NIF: ${f.clienteNIF}
+                                    Dirección: ${f.clienteDireccion}
+                                    Fecha: ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(f.fecha))}
+                                    Estado: ${f.estado}
+                                    Forma de pago: ${f.formaPago}
+                                    
+                                    Base imponible: ${"%.2f".format(f.baseImponible)} €
+                                    IVA (${f.tipoIva}%): ${"%.2f".format(f.cuotaIva)} €
+                                    Total: ${"%.2f".format(f.total)} €
+                                    
+                                    Observaciones: ${f.observaciones}
+                                    
+                                    Enviado por: Administrador (${FirebaseAuth.getInstance().currentUser?.email ?: "ID desconocido"})
+                                    """.trimIndent()
+                        Thread {
+                            try {
+                                MailSender(EMAIL_ORIGEN, PASSWORD_EMAIL).sendMail("Nueva factura #${f.numero}", mensaje, EMAIL_DESTINO)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }.start()
+
                         toastConLogo("Factura creada correctamente")
                     } else {
                         val updated = orig!!.copy(
@@ -180,7 +215,9 @@ class FacturasActivity : AppCompatActivity() {
                     dlg.dismiss()
                 }
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton("Cancelar") { dlg, _ ->
+                toastConLogo("Se canceló la creación/edición de la factura")
+            }
             .show()
     }
 
