@@ -39,14 +39,11 @@ class AlarmManagerAdmin : BroadcastReceiver() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val collapsedView = RemoteViews(context.packageName, R.layout.notificacion_collapsed)
-        val expandedView = RemoteViews(context.packageName, R.layout.notificacion_expanded)
+
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_logonoti)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setCustomContentView(collapsedView)
-            .setCustomBigContentView(expandedView)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
