@@ -88,6 +88,7 @@
             android:src="@drawable/ic_delete"
             android:contentDescription="Borrar"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             card:tint="@android:color/holo_red_dark" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

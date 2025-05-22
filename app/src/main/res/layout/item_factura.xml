@@ -64,6 +64,8 @@
             android:layout_marginStart="12dp"
             android:src="@drawable/ic_delete"
             android:contentDescription="Borrar factura"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             app:tint="@android:color/holo_red_dark"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
