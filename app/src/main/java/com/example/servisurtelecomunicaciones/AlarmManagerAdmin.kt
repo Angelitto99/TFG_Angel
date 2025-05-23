@@ -43,11 +43,14 @@ class AlarmManagerAdmin : BroadcastReceiver() {
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_logonoti)
+            .setContentTitle("Pendientes de gestión")
+            .setContentText("¿Tienes facturas o presupuestos pendientes por revisar?")
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
+
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)

@@ -1,4 +1,3 @@
-// LoginActivity.kt
 package com.example.servisurtelecomunicaciones
 
 import android.content.Context

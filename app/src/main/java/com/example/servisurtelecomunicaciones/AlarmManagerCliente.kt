@@ -42,11 +42,14 @@ class AlarmManagerCliente : BroadcastReceiver() {
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_logonoti)
+            .setContentTitle("Revisión semanal")
+            .setContentText("¿Tuviste algún problema esta semana? Puedes revisarlo y reportarlo si es necesario.")
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
+
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
