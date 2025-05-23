@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app   ="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="12dp"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Cabecera dinámica -->
         <TextView
             android:id="@+id/tvFormHeader"
             android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginBottom="12dp"/>
+            android:layout_marginBottom="6dp"/>
 
         <!-- Número de factura -->
         <com.google.android.material.textfield.TextInputLayout
@@ -39,9 +39,9 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:hint="Nombre del cliente"
-            app:boxStrokeColor="@color/purple_500"
-            android:layout_marginTop="8dp">
+            app:boxStrokeColor="@color/purple_500">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etClienteNombre"
                 android:layout_width="match_parent"
@@ -53,9 +53,9 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:hint="NIF/CIF"
-            app:boxStrokeColor="@color/purple_500"
-            android:layout_marginTop="8dp">
+            app:boxStrokeColor="@color/purple_500">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etClienteNIF"
                 android:layout_width="match_parent"
@@ -67,9 +67,9 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:hint="Dirección del cliente"
-            app:boxStrokeColor="@color/purple_500"
-            android:layout_marginTop="8dp">
+            app:boxStrokeColor="@color/purple_500">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etClienteDireccion"
                 android:layout_width="match_parent"
@@ -81,9 +81,9 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:hint="Base imponible"
-            app:boxStrokeColor="@color/purple_500"
-            android:layout_marginTop="8dp">
+            app:boxStrokeColor="@color/purple_500">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etBase"
                 android:layout_width="match_parent"
@@ -96,9 +96,9 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:hint="IVA (%)"
-            app:boxStrokeColor="@color/purple_500"
-            android:layout_marginTop="8dp">
+            app:boxStrokeColor="@color/purple_500">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etIvaPct"
                 android:layout_width="match_parent"
@@ -106,14 +106,14 @@
                 android:inputType="numberDecimal"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Cuota IVA (solo lectura) -->
+        <!-- Cuota IVA -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:hint="Cuota IVA"
-            app:boxStrokeColor="@color/purple_500"
-            android:layout_marginTop="8dp">
+            app:boxStrokeColor="@color/purple_500">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etIvaCuota"
                 android:layout_width="match_parent"
@@ -121,14 +121,14 @@
                 android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Total factura (solo lectura) -->
+        <!-- Total factura -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:hint="Total factura"
-            app:boxStrokeColor="@color/purple_500"
-            android:layout_marginTop="8dp">
+            app:boxStrokeColor="@color/purple_500">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etTotal"
                 android:layout_width="match_parent"
@@ -139,7 +139,7 @@
         <!-- Forma de pago -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Forma de pago"
@@ -150,10 +150,10 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Observaciones (opcional) -->
+        <!-- Observaciones -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Observaciones (opcional)"
@@ -162,8 +162,9 @@
                 android:id="@+id/etObservaciones"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"/>
+                android:inputType="textMultiLine"
+                android:maxLines="3"
+                android:minLines="1"/>
         </com.google.android.material.textfield.TextInputLayout>
-
     </LinearLayout>
 </ScrollView>

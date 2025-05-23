@@ -51,7 +51,7 @@ class FacturasActivity : AppCompatActivity() {
                     )
                 }
             },
-            onEdit         = { f -> showFormDialog(orig = f, isEdit = true, numeroAuto = f.numero) }
+            onEdit = { f -> showFormDialog(orig = f, isEdit = true, numeroAuto = f.numero) }
         )
         rv.adapter = adapter
 
@@ -60,7 +60,7 @@ class FacturasActivity : AppCompatActivity() {
                 val filtradas = snapshot.children
                     .filter { it.hasChildren() }
                     .mapNotNull { it.getValue(Factura::class.java) }
-                    .filter    { it.usuarioId == uid }
+                    .filter { it.usuarioId == uid }
                     .sortedByDescending { it.fecha }
 
                 lista.clear()
@@ -69,6 +69,7 @@ class FacturasActivity : AppCompatActivity() {
 
                 if (filtradas.isEmpty()) toastConLogo("No hay facturas para mostrar")
             }
+
             override fun onCancelled(error: DatabaseError) {
                 toastConLogo("Error al leer facturas: ${error.message}")
             }
@@ -82,16 +83,16 @@ class FacturasActivity : AppCompatActivity() {
 
     private fun showFormDialog(orig: Factura?, isEdit: Boolean, numeroAuto: String) {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_factura_form, null)
-        val tvHeader        = view.findViewById<TextView>(R.id.tvFormHeader)
-        val etNumero        = view.findViewById<TextInputEditText>(R.id.etNumero)
-        val etClienteNom    = view.findViewById<TextInputEditText>(R.id.etClienteNombre)
-        val etClienteNIF    = view.findViewById<TextInputEditText>(R.id.etClienteNIF)
-        val etClienteDir    = view.findViewById<TextInputEditText>(R.id.etClienteDireccion)
-        val etBase          = view.findViewById<TextInputEditText>(R.id.etBase)
-        val etIvaPct        = view.findViewById<TextInputEditText>(R.id.etIvaPct)
-        val etIvaCu         = view.findViewById<TextInputEditText>(R.id.etIvaCuota)
-        val etTotal         = view.findViewById<TextInputEditText>(R.id.etTotal)
-        val etPago          = view.findViewById<TextInputEditText>(R.id.etFormaPago)
+        val tvHeader = view.findViewById<TextView>(R.id.tvFormHeader)
+        val etNumero = view.findViewById<TextInputEditText>(R.id.etNumero)
+        val etClienteNom = view.findViewById<TextInputEditText>(R.id.etClienteNombre)
+        val etClienteNIF = view.findViewById<TextInputEditText>(R.id.etClienteNIF)
+        val etClienteDir = view.findViewById<TextInputEditText>(R.id.etClienteDireccion)
+        val etBase = view.findViewById<TextInputEditText>(R.id.etBase)
+        val etIvaPct = view.findViewById<TextInputEditText>(R.id.etIvaPct)
+        val etIvaCu = view.findViewById<TextInputEditText>(R.id.etIvaCuota)
+        val etTotal = view.findViewById<TextInputEditText>(R.id.etTotal)
+        val etPago = view.findViewById<TextInputEditText>(R.id.etFormaPago)
         val etObservaciones = view.findViewById<TextInputEditText>(R.id.etObservaciones)
 
         etIvaCu.isEnabled = false
@@ -120,11 +121,12 @@ class FacturasActivity : AppCompatActivity() {
         val watcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val base = etBase.text.toString().toDoubleOrNull() ?: 0.0
-                val pct  = etIvaPct.text.toString().toDoubleOrNull() ?: 0.0
+                val pct = etIvaPct.text.toString().toDoubleOrNull() ?: 0.0
                 val ivaCu = base * pct / 100.0
                 etIvaCu.setText("%.2f".format(ivaCu))
                 etTotal.setText("%.2f".format(base + ivaCu))
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
@@ -141,11 +143,13 @@ class FacturasActivity : AppCompatActivity() {
                 val nif = etClienteNIF.text.toString().trim()
                 val dir = etClienteDir.text.toString().trim()
                 val base = etBase.text.toString().toDoubleOrNull() ?: 0.0
-                val pct  = etIvaPct.text.toString().toDoubleOrNull() ?: 0.0
-                val ivaCu = etIvaCu.text.toString().toDoubleOrNull() ?: 0.0
-                val tot   = etTotal.text.toString().toDoubleOrNull() ?: 0.0
-                val pago  = etPago.text.toString().trim()
-                val obs   = etObservaciones.text.toString().trim()
+                val pct = etIvaPct.text.toString().toDoubleOrNull() ?: 0.0
+
+                val ivaCu = base * pct / 100.0
+                val tot = base + ivaCu
+
+                val pago = etPago.text.toString().trim()
+                val obs = etObservaciones.text.toString().trim()
 
                 if (num.isEmpty() || cli.isEmpty()) {
                     toastConLogo("Número y cliente obligatorios")
@@ -153,40 +157,40 @@ class FacturasActivity : AppCompatActivity() {
                     if (!isEdit) {
                         val ref = dbRef.push()
                         val f = Factura(
-                            id               = ref.key ?: "",
-                            numero           = num,
-                            fecha            = System.currentTimeMillis(),
-                            clienteNombre    = cli,
-                            clienteNIF       = nif,
+                            id = ref.key ?: "",
+                            numero = num,
+                            fecha = System.currentTimeMillis(),
+                            clienteNombre = cli,
+                            clienteNIF = nif,
                             clienteDireccion = dir,
-                            baseImponible    = base,
-                            tipoIva          = pct,
-                            cuotaIva         = ivaCu,
-                            total            = tot,
-                            formaPago        = pago,
-                            observaciones    = obs,
-                            estado           = "pendiente",
-                            usuarioId        = uid
+                            baseImponible = base,
+                            tipoIva = pct,
+                            cuotaIva = ivaCu,
+                            total = tot,
+                            formaPago = pago,
+                            observaciones = obs,
+                            estado = "pendiente",
+                            usuarioId = uid
                         )
                         ref.setValue(f)
 
                         val mensaje = """
-                               Factura #${f.numero}
-                                    Cliente: ${f.clienteNombre}
-                                    NIF: ${f.clienteNIF}
-                                    Dirección: ${f.clienteDireccion}
-                                    Fecha: ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(f.fecha))}
-                                    Estado: ${f.estado}
-                                    Forma de pago: ${f.formaPago}
-                                    
-                                    Base imponible: ${"%.2f".format(f.baseImponible)} €
-                                    IVA (${f.tipoIva}%): ${"%.2f".format(f.cuotaIva)} €
-                                    Total: ${"%.2f".format(f.total)} €
-                                    
-                                    Observaciones: ${f.observaciones}
-                                    
-                                    Enviado por: Administrador (${FirebaseAuth.getInstance().currentUser?.email ?: "ID desconocido"})
-                                    """.trimIndent()
+                            Factura #${f.numero}
+                            Cliente: ${f.clienteNombre}
+                            NIF: ${f.clienteNIF}
+                            Dirección: ${f.clienteDireccion}
+                            Fecha: ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(f.fecha))}
+                            Estado: ${f.estado}
+                            Forma de pago: ${f.formaPago}
+                            
+                            Base imponible: ${"%.2f".format(f.baseImponible)} €
+                            IVA (${f.tipoIva}%): ${"%.2f".format(f.cuotaIva)} €
+                            Total: ${"%.2f".format(f.total)} €
+                            
+                            Observaciones: ${f.observaciones}
+                            
+                            Enviado por: Administrador (${FirebaseAuth.getInstance().currentUser?.email ?: "ID desconocido"})
+                        """.trimIndent()
                         Thread {
                             try {
                                 MailSender(EMAIL_ORIGEN, PASSWORD_EMAIL).sendMail("Nueva factura #${f.numero}", mensaje, EMAIL_DESTINO)
@@ -198,16 +202,16 @@ class FacturasActivity : AppCompatActivity() {
                         toastConLogo("Factura creada correctamente")
                     } else {
                         val updated = orig!!.copy(
-                            numero           = num,
-                            clienteNombre    = cli,
-                            clienteNIF       = nif,
+                            numero = num,
+                            clienteNombre = cli,
+                            clienteNIF = nif,
                             clienteDireccion = dir,
-                            baseImponible    = base,
-                            tipoIva          = pct,
-                            cuotaIva         = ivaCu,
-                            total            = tot,
-                            formaPago        = pago,
-                            observaciones    = obs
+                            baseImponible = base,
+                            tipoIva = pct,
+                            cuotaIva = ivaCu,
+                            total = tot,
+                            formaPago = pago,
+                            observaciones = obs
                         )
                         dbRef.child(updated.id).setValue(updated)
                         toastConLogo("Factura actualizada correctamente")
